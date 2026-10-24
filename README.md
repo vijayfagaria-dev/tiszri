@@ -11,7 +11,7 @@
 See GB wind forecasts the way a day-ahead buyer saw them, and how far off they were.
 Built on Elexon data for decisions made in January 2026.
 
-**[Open the live app →](https://tiszri.vercel.app)**
+**[Open the live app →](https://tiszri.vercel.app)** · **[Watch the walkthrough (4:30) →](https://youtu.be/BeIDjXWJPBY)**
 
 | Overview | Day Replay |
 |---|---|
