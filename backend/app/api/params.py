@@ -79,6 +79,15 @@ def parse_analysis_query(params: QueryParams, settings: Settings) -> tuple[date,
     return delivery_date, cutoff
 
 
+def parse_versions_query(params: QueryParams, settings: Settings) -> date:
+    problems = _Problems()
+    _check_names(params, {"deliveryDate"}, problems)
+    delivery_date = _parse_delivery_date(params.get("deliveryDate"), settings, problems)
+    problems.raise_if_any()
+    assert delivery_date is not None
+    return delivery_date
+
+
 def parse_summary_query(params: QueryParams, settings: Settings) -> SummaryQuery:
     problems = _Problems()
     _check_names(params, {"from", "to", "cutoffDayOffset", "cutoffLocalTime"}, problems)

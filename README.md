@@ -64,6 +64,8 @@ Try it:
 curl "http://localhost:8000/api/v1/wind-analysis?deliveryDate=2026-01-16"
 curl "http://localhost:8000/api/v1/wind-analysis?deliveryDate=2026-01-16&cutoffDayOffset=-1&cutoffLocalTime=12:00"
 curl "http://localhost:8000/api/v1/accuracy-summary"
+curl "http://localhost:8000/api/v1/forecast-versions?deliveryDate=2026-01-16"
+curl -OJ "http://localhost:8000/api/v1/wind-analysis/export?deliveryDate=2026-01-16"
 ```
 
 ## API
@@ -71,6 +73,8 @@ curl "http://localhost:8000/api/v1/accuracy-summary"
 | Endpoint | Purpose |
 |---|---|
 | `GET /api/v1/wind-analysis?deliveryDate=YYYY-MM-DD` | One delivery day replayed at a decision time: per-half-hour forecast vs actual, MAE/RMSE/bias, coverage, warnings |
+| `GET /api/v1/wind-analysis/export` | The same replay as a CSV file, one row per half-hour |
+| `GET /api/v1/forecast-versions?deliveryDate=YYYY-MM-DD` | Every forecast version covering a day, hour by hour, to show how the forecast evolved |
 | `GET /api/v1/accuracy-summary` | Accuracy pooled over a window (default: decisions made in January), error distribution, best/worst days |
 | `GET /api/v1/metadata` | Supported dates, decision-time presets, units, policies, metric definitions |
 | `GET /api/v1/health/live`, `/health/ready` | Liveness and readiness |

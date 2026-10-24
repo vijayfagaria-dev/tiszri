@@ -1,5 +1,6 @@
 """End-to-end API behaviour on recorded data, with every response checked against the contract."""
 
+import csv
 from datetime import date, datetime
 
 import httpx
@@ -376,3 +377,97 @@ async def test_rate_limit(settings: Settings) -> None:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
         statuses = [(await client.get("/api/v1/metadata")).status_code for _ in range(3)]
     assert statuses == [200, 200, 429]
+
+
+async def test_forecast_versions(client: httpx.AsyncClient) -> None:
+    response = await get(client, "/forecast-versions", deliveryDate="2026-01-16")
+    body = response.json()
+    assert response.status_code == 200
+    assert contract_errors(body, "ForecastVersions") == []
+    assert len(body["periods"]) == 24
+    assert len(body["versions"]) == 32
+    assert "s-maxage=" in response.headers["Cache-Control"]
+
+
+async def test_versions_agree_with_the_replay(client: httpx.AsyncClient) -> None:
+    """The forecast a replay selects must be the same value the versions view shows."""
+    versions = (await get(client, "/forecast-versions", deliveryDate="2026-01-16")).json()
+    replay = (
+        await get(
+            client,
+            "/wind-analysis",
+            deliveryDate="2026-01-16",
+            cutoffDayOffset="-1",
+            cutoffLocalTime="12:00",
+        )
+    ).json()
+    by_publish = {v["publishTime"]: v["values"] for v in versions["versions"]}
+    for interval in replay["intervals"]:
+        forecast = interval["forecast"]
+        hour = versions["periods"].index(forecast["periodStart"])
+        assert by_publish[forecast["publishTime"]][hour] == forecast["generation"]
+
+
+async def test_forecast_versions_rejects_a_cutoff(client: httpx.AsyncClient) -> None:
+    response = await get(
+        client,
+        "/forecast-versions",
+        deliveryDate="2026-01-16",
+        decisionCutoff="2026-01-15T09:00:00Z",
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["details"][0]["reason"] == "UNKNOWN_PARAMETER"
+
+
+async def test_csv_export(client: httpx.AsyncClient) -> None:
+    response = await get(
+        client,
+        "/wind-analysis/export",
+        deliveryDate="2026-01-16",
+        cutoffDayOffset="-1",
+        cutoffLocalTime="12:00",
+    )
+    assert response.status_code == 200
+    assert response.headers["Content-Type"].startswith("text/csv")
+    assert response.headers["Content-Disposition"] == (
+        'attachment; filename="wind-analysis-2026-01-16-cutoff-20260115T1200Z.csv"'
+    )
+    lines = response.text.splitlines()
+    context = [line for line in lines if line.startswith("#")]
+    assert "# decisionCutoffUtc=2026-01-15T12:00:00Z" in context
+    rows = list(csv.DictReader(line for line in lines if not line.startswith("#")))
+    assert len(rows) == 48
+    sp44 = rows[43]
+    assert (sp44["forecastMW"], sp44["actualMW"], sp44["errorMW"], sp44["direction"]) == (
+        "10850",
+        "8244",
+        "2606",
+        "OVER",
+    )
+    assert sp44["forecastPublishTime"] == "2026-01-15T09:30:00Z"
+
+
+async def test_csv_export_leaves_missing_values_blank(client: httpx.AsyncClient) -> None:
+    response = await get(
+        client,
+        "/wind-analysis/export",
+        deliveryDate="2026-01-15",
+        cutoffDayOffset="-2",
+        cutoffLocalTime="09:00",
+    )
+    rows = list(
+        csv.DictReader(line for line in response.text.splitlines() if not line.startswith("#"))
+    )
+    sp45 = rows[44]
+    assert (sp45["status"], sp45["forecastMW"], sp45["errorMW"]) == (
+        "FORECAST_NOT_YET_PUBLISHED",
+        "",
+        "",
+    )
+    assert sp45["actualMW"] == "7685"
+
+
+async def test_csv_export_validates_like_the_replay(client: httpx.AsyncClient) -> None:
+    response = await get(client, "/wind-analysis/export", deliveryDate="2026-03-01")
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "INVALID_DELIVERY_DATE"

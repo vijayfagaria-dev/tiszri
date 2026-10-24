@@ -11,7 +11,7 @@ from app.models.enums import Status
 from app.services.loader import SourceInfo
 from app.utils.dates import format_london, format_utc
 
-CONTRACT_VERSION = "1.0.0"
+CONTRACT_VERSION = "1.1.0"
 ALGORITHM_VERSION = "replay/1.0.0"
 POLICY_IDS = {
     "selection": "LATEST_ELIGIBLE_INCLUSIVE",
@@ -119,6 +119,11 @@ class WarningOut(ApiModel):
     affected_count: int
     affected_intervals: list[str]
     data: dict[str, Any] | None
+
+
+def error_direction(error: int) -> str:
+    """OVER when the forecast was too high, UNDER when too low."""
+    return "OVER" if error > 0 else "UNDER" if error < 0 else "EXACT"
 
 
 def rule_out(rule: CutoffRule) -> CutoffRuleOut:

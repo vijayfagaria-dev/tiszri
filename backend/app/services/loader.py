@@ -38,71 +38,82 @@ class LoadedData:
     warnings: list[AnalysisWarning]
 
 
-async def load_data(source: DataSource, first: date, last: date, lookback_days: int) -> LoadedData:
-    """Actuals for first..last, plus every forecast vintage that could cover those days.
+@dataclass
+class LoadedForecasts:
+    by_hour: dict[datetime, list[Forecast]]
+    publish_times: set[datetime]
+    source: SourceInfo
+    warnings: list[AnalysisWarning]
 
-    Forecast vintages cover up to about three days ahead, so we read publications from
-    `lookback_days` before the first day up to the end of the day after the last one. The
-    latest permitted decision time is two days after delivery, and nothing published later
-    can be used.
+
+@dataclass
+class LoadedActuals:
+    by_start: dict[datetime, list[Actual]]
+    source: SourceInfo
+    warnings: list[AnalysisWarning]
+
+
+async def load_data(source: DataSource, first: date, last: date, lookback_days: int) -> LoadedData:
+    """Actuals for first..last, plus every forecast vintage that could cover those days."""
+    actuals, forecasts = await asyncio.gather(
+        load_actuals(source, first, last),
+        load_forecasts(source, first, last, lookback_days),
+    )
+    return LoadedData(
+        forecasts_by_hour=forecasts.by_hour,
+        actuals_by_start=actuals.by_start,
+        publish_times=forecasts.publish_times,
+        sources=[actuals.source, forecasts.source],
+        warnings=actuals.warnings + forecasts.warnings,
+    )
+
+
+async def load_actuals(source: DataSource, first: date, last: date) -> LoadedActuals:
+    result = await source.fetch_actuals(first, last)
+    actuals, rejected, not_wind = parse_actuals(result.rows)
+    info = SourceInfo(
+        dataset="FUELHH",
+        role="ACTUAL",
+        requested_from=first.isoformat(),
+        requested_to=last.isoformat(),
+        basis="SETTLEMENT_DATE",
+        rows_received=len(result.rows),
+        rows_rejected=rejected,
+        rows_filtered=not_wind,
+        fetched_at=result.fetched_at,
+        cache=result.cache,
+    )
+    return LoadedActuals(index_actuals(actuals), info, _row_warnings(info))
+
+
+async def load_forecasts(
+    source: DataSource, first: date, last: date, lookback_days: int
+) -> LoadedForecasts:
+    """Every forecast vintage that could cover delivery dates first..last.
+
+    Vintages cover up to about three days ahead, so we read publications from `lookback_days`
+    before the first day up to the end of the day after the last one. The latest permitted
+    decision time is two days after delivery, and nothing published later can be used.
     """
     published_from = day_bounds(first - timedelta(days=lookback_days))[0]
     published_to = day_bounds(last + timedelta(days=1))[1]
-    actual_result, forecast_result = await asyncio.gather(
-        source.fetch_actuals(first, last),
-        source.fetch_forecasts(published_from, published_to),
+    result = await source.fetch_forecasts(published_from, published_to)
+    forecasts, rejected, off_hour = parse_forecasts(result.rows)
+    by_hour = index_forecasts(forecasts)
+    info = SourceInfo(
+        dataset="WINDFOR",
+        role="FORECAST",
+        requested_from=format_utc(published_from),
+        requested_to=format_utc(published_to),
+        basis="PUBLISH_TIME",
+        rows_received=len(result.rows),
+        rows_rejected=rejected + off_hour,
+        rows_filtered=0,
+        fetched_at=result.fetched_at,
+        cache=result.cache,
     )
 
-    actuals, actuals_rejected, not_wind = parse_actuals(actual_result.rows)
-    forecasts, forecasts_rejected, off_hour = parse_forecasts(forecast_result.rows)
-    forecasts_by_hour = index_forecasts(forecasts)
-
-    sources = [
-        SourceInfo(
-            dataset="FUELHH",
-            role="ACTUAL",
-            requested_from=first.isoformat(),
-            requested_to=last.isoformat(),
-            basis="SETTLEMENT_DATE",
-            rows_received=len(actual_result.rows),
-            rows_rejected=actuals_rejected,
-            rows_filtered=not_wind,
-            fetched_at=actual_result.fetched_at,
-            cache=actual_result.cache,
-        ),
-        SourceInfo(
-            dataset="WINDFOR",
-            role="FORECAST",
-            requested_from=format_utc(published_from),
-            requested_to=format_utc(published_to),
-            basis="PUBLISH_TIME",
-            rows_received=len(forecast_result.rows),
-            rows_rejected=forecasts_rejected + off_hour,
-            rows_filtered=0,
-            fetched_at=forecast_result.fetched_at,
-            cache=forecast_result.cache,
-        ),
-    ]
-
-    warnings = []
-    for info in sources:
-        if info.rows_received == 0:
-            warnings.append(
-                _source_warning(
-                    WarningCode.NO_SOURCE_DATA,
-                    f"{info.dataset} returned no rows for this range.",
-                    {"dataset": info.dataset},
-                )
-            )
-        if info.rows_rejected:
-            warnings.append(
-                _source_warning(
-                    WarningCode.SOURCE_ROWS_REJECTED,
-                    f"{info.rows_rejected} {info.dataset} rows could not be placed on the timeline "
-                    "and were ignored.",
-                    {"dataset": info.dataset, "count": info.rows_rejected},
-                )
-            )
+    warnings = _row_warnings(info)
     if off_hour:
         warnings.append(
             _source_warning(
@@ -118,7 +129,7 @@ async def load_data(source: DataSource, first: date, last: date, lookback_days: 
     first_publish_day_end = day_bounds(first - timedelta(days=lookback_days))[1]
     covering_early = [
         f.publish_time
-        for hour, hour_forecasts in forecasts_by_hour.items()
+        for hour, hour_forecasts in by_hour.items()
         if first_start <= hour < first_end
         for f in hour_forecasts
         if f.publish_time < first_publish_day_end
@@ -132,14 +143,29 @@ async def load_data(source: DataSource, first: date, last: date, lookback_days: 
                 {"earliestPublishTime": format_utc(min(covering_early))},
             )
         )
+    return LoadedForecasts(by_hour, {f.publish_time for f in forecasts}, info, warnings)
 
-    return LoadedData(
-        forecasts_by_hour=forecasts_by_hour,
-        actuals_by_start=index_actuals(actuals),
-        publish_times={f.publish_time for f in forecasts},
-        sources=sources,
-        warnings=warnings,
-    )
+
+def _row_warnings(info: SourceInfo) -> list[AnalysisWarning]:
+    warnings = []
+    if info.rows_received == 0:
+        warnings.append(
+            _source_warning(
+                WarningCode.NO_SOURCE_DATA,
+                f"{info.dataset} returned no rows for this range.",
+                {"dataset": info.dataset},
+            )
+        )
+    if info.rows_rejected:
+        warnings.append(
+            _source_warning(
+                WarningCode.SOURCE_ROWS_REJECTED,
+                f"{info.rows_rejected} {info.dataset} rows could not be placed on the timeline "
+                "and were ignored.",
+                {"dataset": info.dataset, "count": info.rows_rejected},
+            )
+        )
+    return warnings
 
 
 def _source_warning(code: WarningCode, message: str, data: dict[str, object]) -> AnalysisWarning:

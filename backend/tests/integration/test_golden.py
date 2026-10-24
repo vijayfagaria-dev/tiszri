@@ -7,6 +7,7 @@ import pytest
 
 from app.analysis.replay import analyze_day, index_actuals, index_forecasts
 from app.analysis.summary import summarize
+from app.analysis.versions import forecast_versions
 from app.clients.parsing import parse_actuals, parse_forecasts
 from app.models.analysis import CutoffRule, DayAnalysis, Summary
 from app.models.enums import Flag, Status, WarningCode
@@ -160,3 +161,17 @@ def test_every_day_agrees_with_the_independent_oracle(day_offset: int, at: str) 
             assert (day.metrics.mae, day.metrics.rmse, day.metrics.bias) == pytest.approx(
                 oracle.metrics(expected), abs=1e-9
             )
+
+
+def test_forecast_versions_for_16_january() -> None:
+    forecasts_by_hour, _ = sources()
+    hours, versions = forecast_versions(date(2026, 1, 16), forecasts_by_hour)
+    by_publish = {v.publish_time: v.values for v in versions}
+
+    assert len(hours) == 24
+    assert len(versions) == 32
+    assert by_publish[ts("2026-01-15T09:30:00Z")][21] == 10850  # the value used for 21:00-22:00
+    assert ts("2026-01-15T12:25:00Z") in by_publish  # the late publication
+    oldest = by_publish[ts("2026-01-14T02:30:00Z")]
+    assert oldest[21] is not None
+    assert oldest[22:] == [None, None]

@@ -136,3 +136,11 @@ class Summary:
     @property
     def expected(self) -> int:
         return sum(self.status_counts.values())
+
+
+@dataclass
+class ForecastVersion:
+    """One published forecast and its value for each hour of a delivery day."""
+
+    publish_time: datetime
+    values: list[int | None]  # None where this version has no usable value for the hour

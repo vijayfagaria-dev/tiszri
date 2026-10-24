@@ -11,6 +11,7 @@ SCHEMAS = {
     "/api/v1/metadata": "AppMetadata",
     "/api/v1/wind-analysis": "DayAnalysis",
     "/api/v1/accuracy-summary": "AccuracySummary",
+    "/api/v1/forecast-versions": "ForecastVersions",
 }
 INDEX = json.loads((OUTPUT_DIR / "index.json").read_text())
 

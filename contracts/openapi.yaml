@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Wind Forecast Intelligence API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Historical decision replay and accuracy analysis for GB national wind generation.
     Actuals come from Elexon FUELHH (fuelType WIND); forecasts come from Elexon WINDFOR.
@@ -58,6 +58,63 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/DayAnalysis" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /wind-analysis/export:
+    get:
+      operationId: exportWindAnalysis
+      summary: The same day replay as CSV, one row per settlement period
+      description: |
+        Takes the same parameters as /wind-analysis. The file starts with `#` lines giving the
+        delivery date, decision time, source, units and contract version, followed by a header row.
+      parameters:
+        - name: deliveryDate
+          in: query
+          required: true
+          schema: { $ref: "#/components/schemas/LocalDate" }
+        - name: decisionCutoff
+          in: query
+          required: false
+          schema: { type: string, maxLength: 64 }
+        - $ref: "#/components/parameters/CutoffDayOffset"
+        - $ref: "#/components/parameters/CutoffLocalTime"
+      responses:
+        "200":
+          description: >-
+            CSV with columns settlementPeriod, startTime, endTime, status, forecastMW,
+            forecastPublishTime, forecastPeriodStart, leadMinutes, actualMW, errorMW, absErrorMW,
+            direction, exclusionReason. Empty cells mean no value.
+          headers:
+            Content-Disposition:
+              description: attachment; filename="wind-analysis-<date>-cutoff-<yyyymmddThhmmZ>.csv"
+              schema: { type: string }
+          content:
+            text/csv:
+              schema: { type: string }
+        default: { $ref: "#/components/responses/Error" }
+
+  /forecast-versions:
+    get:
+      operationId: getForecastVersions
+      summary: Every WINDFOR forecast version covering a delivery day, hour by hour
+      description: |
+        For views of how the forecast evolved (version ladder, decision-time slider). This does not
+        select a forecast: which version was knowable at a decision time comes from /wind-analysis.
+      parameters:
+        - name: deliveryDate
+          in: query
+          required: true
+          schema: { $ref: "#/components/schemas/LocalDate" }
+      responses:
+        "200":
+          description: Forecast versions, oldest first
+          headers:
+            X-Request-ID: { $ref: "#/components/headers/RequestId" }
+            Server-Timing: { $ref: "#/components/headers/ServerTiming" }
+            Cache-Control: { $ref: "#/components/headers/CacheControl" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ForecastVersions" }
         default: { $ref: "#/components/responses/Error" }
 
   /accuracy-summary:
@@ -695,6 +752,54 @@ components:
           required: [onTheHourOnly]
           properties:
             onTheHourOnly: { $ref: "#/components/schemas/SensitivityMetrics" }
+        warnings:
+          type: array
+          items: { $ref: "#/components/schemas/Warning" }
+
+    # ---------- /forecast-versions ----------
+    ForecastVersion:
+      type: object
+      additionalProperties: false
+      required: [publishTime, values]
+      properties:
+        publishTime: { $ref: "#/components/schemas/Instant" }
+        values:
+          description: >-
+            One entry per item of `periods`. null where this version has no usable value for that
+            hour (it does not cover it, or its records are unusable or conflicting).
+          type: array
+          items: { type: [integer, "null"] }
+    ForecastVersions:
+      type: object
+      additionalProperties: false
+      required: [query, metadata, periods, versions, warnings]
+      properties:
+        query:
+          type: object
+          additionalProperties: false
+          required: [deliveryDate, businessTimezone]
+          properties:
+            deliveryDate: { $ref: "#/components/schemas/LocalDate" }
+            businessTimezone: { const: Europe/London }
+        metadata:
+          type: object
+          additionalProperties: false
+          required: [contractVersion, algorithmVersion, requestId, generatedAt, sources]
+          properties:
+            contractVersion: { type: string }
+            algorithmVersion: { type: string }
+            requestId: { type: string }
+            generatedAt: { $ref: "#/components/schemas/Instant" }
+            sources:
+              type: array
+              items: { $ref: "#/components/schemas/SourceProvenance" }
+        periods:
+          description: Start of each forecast hour of the delivery day (24; 23 or 25 on clock-change days)
+          type: array
+          items: { $ref: "#/components/schemas/Instant" }
+        versions:
+          type: array
+          items: { $ref: "#/components/schemas/ForecastVersion" }
         warnings:
           type: array
           items: { $ref: "#/components/schemas/Warning" }

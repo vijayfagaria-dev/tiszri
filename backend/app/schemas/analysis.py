@@ -21,6 +21,7 @@ from app.schemas.common import (
     WarningOut,
     counts_out,
     cutoff_out,
+    error_direction,
     metrics_out,
     source_out,
     unit_summary,
@@ -199,8 +200,7 @@ def _actual_out(interval: Interval) -> IntervalActualOut | None:
 def _error_out(error: int | None) -> IntervalErrorOut | None:
     if error is None:
         return None
-    direction = "OVER" if error > 0 else "UNDER" if error < 0 else "EXACT"
-    return IntervalErrorOut(signed=error, absolute=abs(error), direction=direction)
+    return IntervalErrorOut(signed=error, absolute=abs(error), direction=error_direction(error))
 
 
 def _utc_or_none(moment: datetime | None) -> str | None:

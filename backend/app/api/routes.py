@@ -3,13 +3,15 @@
 from fastapi import APIRouter, Request, Response
 
 from app.api.deps import ReplayServiceDep, SettingsDep
-from app.api.params import parse_analysis_query, parse_summary_query
+from app.api.params import parse_analysis_query, parse_summary_query, parse_versions_query
 from app.clients.elexon import ElexonClient
 from app.core.config import Settings
 from app.schemas.analysis import DayAnalysisResponse, day_response
+from app.schemas.export import day_csv
 from app.schemas.health import LivenessResponse, ReadinessChecksOut, ReadinessResponse
 from app.schemas.metadata import MetadataResponse, metadata_response
 from app.schemas.summary import AccuracySummaryResponse, summary_response
+from app.schemas.versions import ForecastVersionsResponse, versions_response
 from app.utils.dates import format_utc
 
 router = APIRouter(prefix="/api/v1")
@@ -27,6 +29,35 @@ async def wind_analysis(
     request.state.timings = {"fetch": report.fetch_ms, "analyze": report.analyze_ms}
     response.headers["Cache-Control"] = _cacheable(settings)
     return day_response(report, settings, request.state.request_id)
+
+
+@router.get("/wind-analysis/export")
+async def wind_analysis_export(
+    request: Request, settings: SettingsDep, service: ReplayServiceDep
+) -> Response:
+    delivery_date, cutoff = parse_analysis_query(request.query_params, settings)
+    report = await service.replay_day(delivery_date, cutoff)
+    request.state.timings = {"fetch": report.fetch_ms, "analyze": report.analyze_ms}
+    filename = f"wind-analysis-{delivery_date.isoformat()}-cutoff-{cutoff.utc:%Y%m%dT%H%MZ}.csv"
+    return Response(
+        day_csv(report),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": _cacheable(settings),
+        },
+    )
+
+
+@router.get("/forecast-versions", response_model=ForecastVersionsResponse)
+async def forecast_versions(
+    request: Request, response: Response, settings: SettingsDep, service: ReplayServiceDep
+) -> ForecastVersionsResponse:
+    delivery_date = parse_versions_query(request.query_params, settings)
+    report = await service.forecast_versions(delivery_date)
+    request.state.timings = {"fetch": report.fetch_ms, "analyze": report.analyze_ms}
+    response.headers["Cache-Control"] = _cacheable(settings)
+    return versions_response(report, request.state.request_id)
 
 
 @router.get("/accuracy-summary", response_model=AccuracySummaryResponse)

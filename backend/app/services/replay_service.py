@@ -2,15 +2,23 @@
 
 import time
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from app.analysis.cutoffs import cutoff_from_rule
 from app.analysis.day_warnings import sort_warnings
 from app.analysis.replay import analyze_day
 from app.analysis.summary import summarize
+from app.analysis.versions import forecast_versions
 from app.clients.base import DataSource
-from app.models.analysis import AnalysisWarning, Cutoff, CutoffRule, DayAnalysis, Summary
-from app.services.loader import SourceInfo, load_data
+from app.models.analysis import (
+    AnalysisWarning,
+    Cutoff,
+    CutoffRule,
+    DayAnalysis,
+    ForecastVersion,
+    Summary,
+)
+from app.services.loader import SourceInfo, load_data, load_forecasts
 
 
 @dataclass
@@ -30,6 +38,17 @@ class SummaryReport:
     first: date
     last: date
     sources: list[SourceInfo]
+    warnings: list[AnalysisWarning]
+    fetch_ms: float = 0.0
+    analyze_ms: float = 0.0
+
+
+@dataclass
+class VersionsReport:
+    delivery_date: date
+    hours: list[datetime]
+    versions: list[ForecastVersion]
+    source: SourceInfo
     warnings: list[AnalysisWarning]
     fetch_ms: float = 0.0
     analyze_ms: float = 0.0
@@ -71,6 +90,23 @@ class ReplayService:
             last,
             data.sources,
             warnings,
+            _ms(started, fetched),
+            _ms(fetched),
+        )
+
+    async def forecast_versions(self, delivery_date: date) -> VersionsReport:
+        started = time.perf_counter()
+        loaded = await load_forecasts(
+            self._source, delivery_date, delivery_date, self._lookback_days
+        )
+        fetched = time.perf_counter()
+        hours, versions = forecast_versions(delivery_date, loaded.by_hour)
+        return VersionsReport(
+            delivery_date,
+            hours,
+            versions,
+            loaded.source,
+            sort_warnings(loaded.warnings),
             _ms(started, fetched),
             _ms(fetched),
         )
