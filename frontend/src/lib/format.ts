@@ -8,13 +8,24 @@ export const number = (value: number | null | undefined, signed = false) =>
 export const mw = (value: number | null | undefined, signed = false) =>
   value == null ? "Unavailable" : `${number(value, signed)} MW`;
 export const percent = (value: number) => `${Math.floor(value * 1000) / 10}%`;
+const londonTime = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/London",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZoneName: "short",
+});
+// Browsers name the London zone "GMT+0" / "GMT+1" rather than GMT / BST.
 export const time = (value: string) =>
-  new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/London",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  }).format(new Date(value));
+  londonTime
+    .formatToParts(new Date(value))
+    .map((part) =>
+      part.type !== "timeZoneName"
+        ? part.value
+        : ["BST", "GMT+1"].includes(part.value)
+          ? "BST"
+          : "GMT",
+    )
+    .join("");
 export const dateLabel = (value: string, year = false) =>
   new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/London",
