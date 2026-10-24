@@ -13,7 +13,7 @@ function DemoBanner() {
         <i />
         Demo data{" "}
         <span className="demo-note">
-          · Synthetic examples, not verified January measurements
+          · Recorded API responses for 5, 15, 16, 19 and 28 January
         </span>
       </span>
       <label>
@@ -35,12 +35,11 @@ function DemoBanner() {
             setP(next);
           }}
         >
-          <option value="complete">Complete</option>
-          <option value="partial">Partial</option>
-          <option value="empty">Empty</option>
-          <option value="edge">All statuses</option>
+          <option value="complete">Recorded data</option>
+          <option value="edge">All statuses (synthetic, 16 Jan)</option>
           <option value="error:502">Source unavailable</option>
           <option value="error:503">Rate limited</option>
+          <option value="error:504">Source timeout</option>
           <option value="error:malformed">Invalid response</option>
         </select>
       </label>

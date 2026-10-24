@@ -1,17 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
 import { metadataSchema, daySchema } from "../api/schemas";
 import { number, percent, time } from "../lib/format";
 import { apiParams, canonicalParams } from "../app/url";
 import { seriesPath } from "../features/replay/chartGeometry";
-const metadata = metadataSchema.parse(
-  JSON.parse(
-    readFileSync(
-      new URL("../../public/_fixtures/metadata.json", import.meta.url),
-      "utf8",
-    ),
-  ),
-);
+import { fixture } from "./contract";
+const metadata = metadataSchema.parse(fixture("metadata.json"));
 describe("display formatting and URL state", () => {
   it("keeps missing distinct from zero and floors coverage", () => {
     expect(number(null)).toBe("Unavailable");
@@ -46,17 +39,7 @@ describe("display formatting and URL state", () => {
     ).toThrow("Unknown");
   });
   it("breaks chart lines at missing values instead of joining across gaps", () => {
-    const data = daySchema.parse(
-      JSON.parse(
-        readFileSync(
-          new URL(
-            "../../public/_fixtures/day_2026-01-16_-1_0900_complete.json",
-            import.meta.url,
-          ),
-          "utf8",
-        ),
-      ),
-    );
+    const data = daySchema.parse(fixture("analysis_2026-01-16_default.json"));
     const intervals = data.intervals.slice(0, 5);
     intervals[2].forecast = null;
     const path = seriesPath(

@@ -2,19 +2,18 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { readFileSync } from "node:fs";
 import { daySchema } from "../api/schemas";
 import { Inspector } from "../features/replay/Inspector";
 import { Warnings } from "../components/ui";
 import { statusLabels, warningLabels } from "../lib/status";
-const data = daySchema.parse(
-  JSON.parse(
-    readFileSync("public/_fixtures/day_2026-01-16_-1_0900_edge.json", "utf8"),
-  ),
-);
+import { fixture } from "./contract";
+const data = daySchema.parse(fixture("analysis_synthetic_edge-cases.json"));
+const oneOfEachStatus = [
+  ...new Map(data.intervals.map((i) => [i.status, i])).values(),
+];
 afterEach(cleanup);
 describe("evidence presentation", () => {
-  for (const interval of data.intervals.slice(0, 8))
+  for (const interval of oneOfEachStatus)
     it(`explains ${interval.status}`, () => {
       render(<Inspector data={data} interval={interval} />);
       expect(

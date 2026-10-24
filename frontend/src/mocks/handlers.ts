@@ -1,143 +1,107 @@
-import { delay, http, HttpResponse, bypass } from "msw";
+import { delay, http, HttpResponse, type JsonBodyType } from "msw";
+
+// Mock mode serves the responses the backend generates into contracts/fixtures/api
+// (`make fixtures`), so the demo shows real January 2026 results in the current contract shape.
+const directory = "../../../contracts/fixtures/api/";
+const files = import.meta.glob<JsonBodyType>(
+  "../../../contracts/fixtures/api/*.json",
+  {
+    import: "default",
+  },
+);
+const load = (file: string) => files[directory + file]();
+
+type Entry = {
+  file: string;
+  status: number;
+  request: { path: string; params: Record<string, string> };
+  source: string;
+};
 const headers = {
-  "X-Request-ID": "synthetic-demo-request",
+  "X-Request-ID": "demo-request",
   "Server-Timing": "fetch;dur=12, analyze;dur=4, total;dur=16",
   "Cache-Control":
     "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800",
 };
-const error = (
-  code: string,
-  message: string,
-  status: number,
-  retryable = false,
-  details: { field: string; reason: string; message: string }[] = [],
-) =>
+
+// The app always sends the decision rule and summary window; fill in the defaults the
+// backend applies so both sides of the lookup are spelled the same way.
+const defaults: Record<string, Record<string, string>> = {
+  "/api/v1/wind-analysis": { cutoffDayOffset: "-1", cutoffLocalTime: "09:00" },
+  "/api/v1/accuracy-summary": {
+    from: "2026-01-02",
+    to: "2026-02-01",
+    cutoffDayOffset: "-1",
+    cutoffLocalTime: "09:00",
+  },
+};
+const requestKey = (path: string, params: Record<string, string>) => {
+  const all = { ...defaults[path], ...params };
+  if (all.decisionCutoff) {
+    delete all.cutoffDayOffset;
+    delete all.cutoffLocalTime;
+  }
+  return `${path}?${new URLSearchParams(Object.entries(all).sort())}`;
+};
+
+const catalogue = load("index.json").then((data) => {
+  const index = data as Entry[];
+  const recorded = new Map<string, string>();
+  const synthetic = new Map<string, string>();
+  const errors = new Map<string, Entry>();
+  for (const entry of index) {
+    const key = requestKey(entry.request.path, entry.request.params);
+    if (entry.status !== 200) {
+      if (!errors.has(String(entry.status)))
+        errors.set(String(entry.status), entry);
+    } else if (entry.source === "synthetic") synthetic.set(key, entry.file);
+    else recorded.set(key, entry.file);
+  }
+  return { recorded, synthetic, errors };
+});
+
+const notFound = () =>
   HttpResponse.json(
     {
       error: {
-        code,
-        message,
-        details,
-        requestId: "synthetic-error",
-        retryable,
+        code: "NOT_FOUND",
+        message:
+          "Demo mode only has recorded examples for 5, 15, 16, 19 and 28 January. Connect the app to the API to explore any other day or decision time.",
+        details: [],
+        requestId: "demo-request",
+        retryable: false,
       },
     },
-    {
-      status,
-      headers: {
-        ...headers,
-        "Cache-Control": "no-store",
-        ...(status === 429 || status === 503 ? { "Retry-After": "2" } : {}),
-      },
-    },
+    { status: 404, headers: { "Cache-Control": "no-store" } },
   );
+
 export const handlers = [
-  http.get("*/api/v1/:endpoint", async ({ request, params }) => {
+  http.get("*/api/v1/:endpoint", async ({ request }) => {
     const ui = new URLSearchParams(location.search);
     await delay(
       Math.min(10000, Math.max(0, Number(ui.get("mockDelay") ?? 300))),
     );
-    if (params.endpoint === "metadata")
-      return HttpResponse.json(
-        await (await fetch(bypass("/_fixtures/metadata.json"))).json(),
-        { headers },
-      );
+    const { recorded, synthetic, errors } = await catalogue;
+    const url = new URL(request.url);
     const forced = ui.get("mockError");
-    if (forced) {
-      const errors: Record<string, [string, number, boolean]> = {
-        "502": ["UPSTREAM_UNAVAILABLE", 502, true],
-        "503": ["UPSTREAM_RATE_LIMITED", 503, true],
-        "504": ["UPSTREAM_TIMEOUT", 504, true],
-        "500": ["INTERNAL_ERROR", 500, false],
-        "422": ["INVALID_DELIVERY_DATE", 422, false],
-        "429": ["RATE_LIMITED", 429, true],
-      };
+    if (forced && url.pathname !== "/api/v1/metadata") {
       if (forced === "malformed") return HttpResponse.json({ broken: true });
-      const [code, status, retryable] = errors[forced] ?? [
-        "INTERNAL_ERROR",
-        500,
-        false,
-      ];
-      return error(
-        code,
-        `Demo scenario: ${code.toLowerCase().replaceAll("_", " ")}.`,
-        status,
-        retryable,
-      );
+      const entry = errors.get(forced) ?? errors.get("500")!;
+      return HttpResponse.json(await load(entry.file), {
+        status: entry.status,
+        headers: {
+          ...headers,
+          "Cache-Control": "no-store",
+          ...(entry.status === 503 ? { "Retry-After": "2" } : {}),
+        },
+      });
     }
-    const p = new URL(request.url).searchParams;
-    const date = p.get("deliveryDate") ?? "";
-    if (
-      params.endpoint === "wind-analysis" &&
-      (!/^2026-(01-\d{2}|02-01)$/.test(date) ||
-        date < "2026-01-01" ||
-        date > "2026-02-01")
-    )
-      return error(
-        "INVALID_DELIVERY_DATE",
-        "Delivery date must be between 1 January and 1 February 2026.",
-        422,
-        false,
-        [
-          {
-            field: "deliveryDate",
-            reason: "OUT_OF_RANGE",
-            message: "Select a date within the supported window.",
-          },
-        ],
-      );
-    let offset = p.get("cutoffDayOffset") ?? "-1";
-    let local = p.get("cutoffLocalTime") ?? "09:00";
-    const explicit = p.get("decisionCutoff");
-    if (explicit) {
-      offset = String(
-        Math.round(
-          (Date.parse(explicit.slice(0, 10)) - Date.parse(date)) / 86400000,
-        ),
-      );
-      local = explicit.slice(11, 16);
-    }
-    const key = `${offset}_${local.replace(":", "")}`;
-    const scenario = ui.get("scenario") ?? "complete";
-    if (
-      params.endpoint === "accuracy-summary" &&
-      (p.get("from") !== "2026-01-02" || p.get("to") !== "2026-02-01")
-    )
-      return error(
-        "NOT_FOUND",
-        "Demo fixtures cover the inclusive 2 January–1 February window. Real API mode supports all contract date ranges.",
-        404,
-      );
+    const key = requestKey(url.pathname, Object.fromEntries(url.searchParams));
     const file =
-      params.endpoint === "wind-analysis"
-        ? `day_${date}_${key}_${scenario}`
-        : params.endpoint === "accuracy-summary"
-          ? `summary_${key}_${scenario}`
-          : null;
-    if (
-      !file ||
-      ![
-        "-2_0900",
-        "-1_0900",
-        "-1_1200",
-        "0_0000",
-        "1_0000",
-        "-3_0900",
-      ].includes(key) ||
-      !["complete", "partial", "empty", "edge"].includes(scenario)
-    )
-      return error(
-        "NOT_FOUND",
-        "No demo fixture for this input. Available: all five presets and the custom rule −3 days at 09:00, 1 January–1 February 2026.",
-        404,
-      );
-    const data = await (await fetch(bypass(`/_fixtures/${file}.json`))).json();
-    if (explicit && params.endpoint === "wind-analysis") {
-      data.query.decisionCutoff.source = "EXPLICIT";
-      data.query.decisionCutoff.rule = null;
-      data.query.decisionCutoff.presetId = null;
-    }
-    return HttpResponse.json(data, { headers });
+      (ui.get("scenario") === "edge" && synthetic.get(key)) ||
+      recorded.get(key);
+    if (!file) return notFound();
+    return HttpResponse.json(await load(file), { headers });
   }),
   http.get("*/api/v1/health/ready", () =>
     HttpResponse.json(

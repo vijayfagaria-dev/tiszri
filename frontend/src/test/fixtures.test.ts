@@ -1,22 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { readdirSync, readFileSync } from "node:fs";
-import { daySchema, metadataSchema, summarySchema } from "../api/schemas";
-const directory = new URL("../../public/_fixtures/", import.meta.url);
-describe("synthetic contract catalogue", () => {
-  for (const name of readdirSync(directory).filter((n) =>
-    n.endsWith(".json"),
-  )) {
-    it(name, () => {
-      const raw = JSON.parse(readFileSync(new URL(name, directory), "utf8"));
-      if (name === "metadata.json") {
+import {
+  daySchema,
+  errorSchema,
+  metadataSchema,
+  summarySchema,
+} from "../api/schemas";
+import { fixture } from "./contract";
+const index = fixture("index.json") as { file: string }[];
+describe("backend fixtures pass the frontend's runtime checks", () => {
+  for (const { file } of index) {
+    if (file.startsWith("versions_")) continue; // endpoint not used by the app yet
+    it(file, () => {
+      const raw = fixture(file);
+      if (file === "metadata.json") {
         expect(metadataSchema.safeParse(raw).success).toBe(true);
         return;
       }
-      const data = name.startsWith("day_")
+      if (file.startsWith("error_")) {
+        expect(errorSchema.safeParse(raw).success).toBe(true);
+        return;
+      }
+      const data = file.startsWith("analysis_")
         ? daySchema.parse(raw)
         : summarySchema.parse(raw);
       const { counts, coverage } = data.metadata;
-      expect(data.metadata.requestId).toMatch(/^synthetic-/);
       expect(counts.expected).toBe(counts.matched + counts.excluded);
       expect(Object.values(counts.byStatus).reduce((a, b) => a + b, 0)).toBe(
         counts.expected,
@@ -54,14 +61,10 @@ describe("synthetic contract catalogue", () => {
           expect(i.settlementPeriod).toBe(index + 1);
           expect(Date.parse(i.endTime) - Date.parse(i.startTime)).toBe(1800000);
           expect(i.error !== null).toBe(i.status === "MATCHED");
-          if (i.forecast) {
+          if (i.forecast)
             expect(Date.parse(i.forecast.publishTime)).toBeLessThanOrEqual(
               Date.parse(data.query.decisionCutoff.utc),
             );
-            const pair = data.intervals[index % 2 ? index - 1 : index + 1];
-            if (pair?.forecast)
-              expect(i.forecast.generation).toBe(pair.forecast.generation);
-          }
           if (i.error)
             expect(i.error.signed).toBe(
               i.forecast!.generation! - i.actual!.generation!,

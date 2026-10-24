@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Provisional contract 1.0.0 models. Replace with generated types when OpenAPI is supplied.
+// Runtime checks for the responses described in ../contracts/openapi.yaml.
 const count = z.number().int().nonnegative();
 const instant = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -169,7 +169,7 @@ export const intervalSchema = z.object({
   actual: z
     .object({
       generation: z.number().int().nullable(),
-      publishTime: instant,
+      publishTime: instant.nullable(),
       conflictingValues: z.array(z.number().int()).nullable(),
     })
     .nullable(),

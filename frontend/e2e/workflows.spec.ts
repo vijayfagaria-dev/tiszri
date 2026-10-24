@@ -32,15 +32,15 @@ test("partial, empty, all-status and hindsight evidence", async ({ page }) => {
     .getByRole("button", { name: "Not published 4", exact: true })
     .click();
   await expect(page.locator("tbody tr")).toHaveCount(4);
-  await page.getByLabel("Demo scenario").selectOption("empty");
+  await page.goto("/replay?date=2026-01-15&rule=custom:-3:09:00");
   await expect(
     page.getByRole("heading", {
       name: "No matched evidence at this decision time",
     }),
   ).toBeVisible();
   await expect(page.locator(".metric-value").first()).toHaveText("Unavailable");
+  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
   await page.getByLabel("Demo scenario").selectOption("edge");
-  await page.getByLabel("Forecast decision time").selectOption("d1-0900");
   await page.getByRole("button", { name: "All 48", exact: true }).click();
   await expect(page.locator("tbody")).toContainText("Ambiguous forecast");
   await page.getByLabel("Forecast decision time").selectOption("after-0000");
