@@ -98,6 +98,12 @@ SCENARIOS = [
         source="synthetic",
     ),
     Scenario(
+        "versions_2026-01-16",
+        "/forecast-versions",
+        {"deliveryDate": "2026-01-16"},
+        "Every forecast version covering 16 Jan, hour by hour",
+    ),
+    Scenario(
         "summary_default", "/accuracy-summary", description="Decisions made in January, 09:00"
     ),
     Scenario(

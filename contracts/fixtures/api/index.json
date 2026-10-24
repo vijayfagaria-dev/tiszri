@@ -126,6 +126,18 @@
     "description": "SYNTHETIC: every exclusion status, flag and data-quality warning"
   },
   {
+    "file": "versions_2026-01-16.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/forecast-versions",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "recorded",
+    "description": "Every forecast version covering 16 Jan, hour by hour"
+  },
+  {
     "file": "summary_default.json",
     "status": 200,
     "request": {
