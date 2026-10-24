@@ -11,7 +11,7 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
     page.getByRole("heading", { name: "Forecast vs actual" }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Select interval 24, vintage", exact: false })
+    .getByRole("button", { name: "Inspect interval 24", exact: true })
     .click();
   await expect(page).toHaveURL(/interval=24/);
   await expect(page.locator("#interval-inspector")).toContainText(
@@ -27,18 +27,19 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
 });
 test("partial, empty, all-status and hindsight evidence", async ({ page }) => {
   await page.goto("/replay?date=2026-01-15&rule=d2-0900");
-  await expect(page.getByText(/Partial evidence —/)).toBeVisible();
+  await expect(page.locator(".callout")).toContainText("Partial coverage");
   await page
     .getByRole("button", { name: "Not published 4", exact: true })
     .click();
   await expect(page.locator("tbody tr")).toHaveCount(4);
   await page.goto("/replay?date=2026-01-15&rule=custom:-3:09:00");
   await expect(
-    page.getByRole("heading", {
-      name: "No matched evidence at this decision time",
-    }),
+    page.getByRole("heading", { name: "No forecast had been published yet" }),
   ).toBeVisible();
-  await expect(page.locator(".metric-value").first()).toHaveText("Unavailable");
+  await expect(page.locator(".empty-panel")).toContainText(
+    "The first one was published on Tue 13 Jan at 02:30 GMT.",
+  );
+  await expect(page.locator(".callout")).toHaveCount(0);
   await page.goto("/replay?date=2026-01-16&rule=d1-0900");
   await page.getByLabel("Demo scenario").selectOption("edge");
   await page.getByRole("button", { name: "All 48", exact: true }).click();
@@ -154,21 +155,21 @@ test("keyboard selection, mobile evidence sheet and focus restoration", async ({
   await expect(trigger).toBeFocused();
 });
 
-test("custom cutoff validation and exact-cutoff URL restore", async ({
-  page,
-}) => {
-  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
-  await page.getByText("Custom cutoff", { exact: true }).click();
-  await page.getByLabel("Exact decision time (UTC)").fill("not-a-date");
-  await page.getByRole("button", { name: "Apply cutoff" }).click();
-  await expect(page.getByRole("alert")).toContainText("valid UTC instant");
-  await page
-    .getByLabel("Exact decision time (UTC)")
-    .fill("2026-01-15T12:00:00Z");
-  await page.getByRole("button", { name: "Apply cutoff" }).click();
-  await expect(page).toHaveURL(/cutoff=2026-01-15T12/);
-  await expect(page.locator(".replay-heading")).toContainText("exact time");
-  await page.reload();
+test("custom decision time and exact-cutoff URL restore", async ({ page }) => {
+  await page.goto("/replay?date=2026-01-15&rule=d1-0900");
+  await page.getByText("Custom time", { exact: true }).click();
+  await page.getByLabel("Decision day").selectOption("-3");
+  await page.getByLabel("Time (UK)").selectOption("09:00");
+  await page.getByRole("button", { name: "Apply" }).click();
+  await expect(page).toHaveURL(/rule=custom%3A-3%3A09%3A00/);
+  await expect(page.locator(".replay-heading")).toContainText(
+    "Mon 12 Jan at 09:00 GMT",
+  );
+  await page.getByText("Custom time", { exact: true }).click();
+  await expect(page.getByLabel("Decision day")).toBeVisible();
+  await page.locator(".app-footer").click();
+  await expect(page.getByLabel("Decision day")).toBeHidden();
+  await page.goto("/replay?date=2026-01-16&cutoff=2026-01-15T12%3A00%3A00Z");
   await expect(page.locator(".replay-heading")).toContainText("exact time");
 });
 
@@ -178,4 +179,24 @@ test("degraded readiness remains distinguishable from an analysis failure", asyn
   await page.goto("/?mockHealth=DEGRADED");
   await expect(page.locator(".health")).toContainText("Degraded");
   await expect(page.getByRole("heading", { name: /How far/ })).toBeVisible();
+});
+
+test("info tips show on hover or focus and close on leave, outside click or Escape", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const info = page.getByRole("button", { name: "About Typical miss" });
+  const tip = page.getByRole("tooltip");
+  await info.hover();
+  await expect(tip).toBeVisible();
+  await page.mouse.move(0, 0);
+  await expect(tip).toBeHidden();
+  await info.focus();
+  await expect(tip).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(tip).toBeHidden();
+  await info.click();
+  await expect(tip).toBeVisible();
+  await page.locator(".app-footer").click();
+  await expect(tip).toBeHidden();
 });

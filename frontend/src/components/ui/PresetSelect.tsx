@@ -12,7 +12,7 @@ export function PresetSelect({
 }) {
   return (
     <label className="preset-label">
-      <span>Forecast viewed</span>
+      <span>Decision time</span>
       <select
         aria-label="Forecast decision time"
         value={value}

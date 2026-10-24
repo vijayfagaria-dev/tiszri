@@ -13,9 +13,9 @@ import {
 import type { Metadata, Summary } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import {
+  InfoTip,
   MetricsGrid,
   PresetSelect,
-  Qualification,
   Warnings,
 } from "../../components/ui";
 import { WindArt } from "../../components/WindArt";
@@ -52,15 +52,10 @@ export function Overview({
               value={search.get("rule") ?? "d1-0900"}
               onChange={(v) => change("rule", v)}
             />
-            <details className="help">
-              <summary aria-label="About the decision time">
-                <Info size={16} />
-              </summary>
-              <p>
-                Only forecasts published at or before this time are eligible.
-                09:00 is an editable default, not a market rule.
-              </p>
-            </details>
+            <InfoTip label="About the decision time">
+              Only forecasts published at or before this time are eligible.
+              09:00 is an editable default, not a market rule.
+            </InfoTip>
           </div>
         </div>
         <div className="hero-content">
@@ -165,7 +160,6 @@ export function Overview({
           </aside>
         </div>
       </section>
-      <Qualification data={data} />
       <Warnings warnings={data.warnings} />
       <DailyPerformance
         data={data}

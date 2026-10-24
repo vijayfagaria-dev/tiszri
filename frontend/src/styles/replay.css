@@ -53,22 +53,20 @@
   z-index: 40;
   box-shadow: 0 20px 40px #0008;
 }
-.custom-cutoff label,
-.custom-cutoff input {
+.custom-cutoff label {
+  display: block;
+  color: #c2d3ef;
+}
+.custom-cutoff select {
   display: block;
   width: 100%;
-}
-.custom-cutoff input {
-  margin: 8px 0;
-  font-size: 11px;
+  margin: 6px 0 14px;
+  font-size: 12px;
 }
 .custom-cutoff p {
   color: var(--muted);
   font-size: 11px;
-  margin-bottom: 10px;
-}
-.custom-cutoff p[role="alert"] {
-  color: var(--amber);
+  margin-bottom: 12px;
 }
 .replay-heading {
   display: flex;
@@ -104,18 +102,17 @@
   padding: 6px 8px;
 }
 .warnings {
-  margin: 10px 0;
-}
-.hindsight-reset {
-  margin-bottom: 16px;
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
 }
 .empty-panel {
-  padding: 20px;
-  margin: 15px 0;
+  padding: 24px;
 }
 .empty-panel p {
+  max-width: 760px;
   color: var(--muted);
-  margin: 10px 0;
+  margin: 8px 0 18px;
 }
 .replay-layout {
   display: grid;
@@ -378,11 +375,12 @@
   font-size: 9px;
   color: #b0c8e9;
 }
+/* The thumb (16px) travels from 5% to 96%, the same span as the chart's points. */
 .interval-slider input {
-  width: 100%;
+  width: calc(91% + 16px);
   height: 5px;
   padding: 0;
-  margin: 4px 0 12px;
+  margin: 4px 0 12px calc(5% - 8px);
   accent-color: #a08dff;
   cursor: pointer;
 }
@@ -408,55 +406,49 @@
 }
 .vintage-ribbon {
   display: flex;
-  gap: 3px;
-  padding: 9px 4px 14px;
-  overflow-x: auto;
+  gap: 2px;
+  margin: 9px 0 14px;
 }
-.vintage-ribbon button {
-  position: relative;
+.vintage-ribbon > span {
   flex: 1;
-  min-width: 24px;
-  padding: 0;
+  min-width: 0;
   height: 26px;
   border-radius: 3px;
   border: 1px solid #bca8ff77;
   background: linear-gradient(135deg, #738bff, #8561d9);
+  cursor: pointer;
 }
-.vintage-ribbon button:nth-child(4n) {
-  background: linear-gradient(135deg, #69b2ff, #776ad5);
-}
-.vintage-ribbon button.active {
+.vintage-ribbon > span.active,
+.error-fingerprint > span.active {
   outline: 2px solid #c0e8ff;
-  outline-offset: 3px;
-  z-index: 1;
+  outline-offset: 2px;
 }
-.vintage-ribbon button.excluded {
+.vintage-ribbon > span.excluded {
   background: repeating-linear-gradient(135deg, #45678d 0 2px, #152d4d 2px 4px);
   border-color: #5e7a9c;
 }
 .error-fingerprint {
   display: flex;
-  gap: 3px;
+  gap: 2px;
   height: 70px;
   position: relative;
-  overflow-x: auto;
   background: linear-gradient(
     transparent calc(50% - 0.5px),
     #66819c calc(50% - 0.5px),
     #66819c calc(50% + 0.5px),
     transparent calc(50% + 0.5px)
   );
+  /* draw the zero line under the bars only, not across the side insets */
+  background-clip: content-box;
 }
-.error-fingerprint button {
+.error-fingerprint > span {
   position: relative;
-  padding: 0;
   flex: 1;
-  min-width: 24px;
-  background: transparent;
-  border: none;
+  min-width: 0;
   border-radius: 2px;
+  cursor: pointer;
 }
-.error-fingerprint button > span {
+.error-fingerprint > span > i {
   position: absolute;
   bottom: 50%;
   width: 100%;
@@ -465,20 +457,17 @@
   border-radius: 2px 2px 0 0;
   background: #b58cea;
 }
-.error-fingerprint button.under > span {
+.error-fingerprint > span.under > i {
   top: 50%;
   bottom: auto;
   background: #50c4d2;
   border-radius: 0 0 2px 2px;
 }
-.error-fingerprint button.excluded > span {
+.error-fingerprint > span.excluded > i {
   top: 24px;
   background: repeating-linear-gradient(135deg, #6681a5 0 2px, #132f4a 2px 4px);
 }
-.error-fingerprint button.active {
-  outline: 1px solid #c4e5ff;
-  outline-offset: 1px;
-}
+
 .ledger {
   margin-top: 14px;
   overflow: hidden;
@@ -501,8 +490,9 @@
   color: #b9ccec;
 }
 .ledger-heading select {
-  padding: 4px 8px;
+  padding: 4px 28px 4px 8px;
   font-size: 9px;
+  background-size: 10px;
 }
 .filters {
   display: flex;
@@ -870,18 +860,12 @@
   .chart-readout > strong {
     width: 100%;
   }
-  .vintage-ribbon {
-    gap: 2px;
-  }
   .ribbon-heading {
     flex-wrap: wrap;
     gap: 3px;
   }
   .ribbon-heading > span {
     font-size: 8px;
-  }
-  .error-fingerprint {
-    gap: 2px;
   }
   .filters button {
     font-size: 8px;

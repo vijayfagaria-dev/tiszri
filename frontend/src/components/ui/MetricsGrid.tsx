@@ -1,6 +1,7 @@
-import { ArrowUp, Check, Info, TriangleAlert, Waves } from "lucide-react";
+import { ArrowUp, Check, TriangleAlert, Waves } from "lucide-react";
 import type { Metrics } from "../../api/schemas";
 import { number, percent } from "../../lib/format";
+import { InfoTip } from "./InfoTip";
 
 export function MetricsGrid({
   metrics,
@@ -64,12 +65,7 @@ export function MetricsGrid({
             <span className="icon-orb">
               <Icon size={21} />
             </span>
-            <details className="help">
-              <summary aria-label={`About ${item.title}`}>
-                <Info size={15} />
-              </summary>
-              <p>{item.help}</p>
-            </details>
+            <InfoTip label={`About ${item.title}`}>{item.help}</InfoTip>
           </div>
           {item.value === "Unavailable" ? (
             <div className="metric-value unavailable">{item.value}</div>

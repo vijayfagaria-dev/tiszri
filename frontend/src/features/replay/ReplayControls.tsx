@@ -1,15 +1,13 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Metadata } from "../../api/schemas";
 import { CopyButton, PresetSelect } from "../../components/ui";
 import { shiftDate } from "../../lib/format";
+import { CustomTime } from "./CustomTime";
 
 export function ReplayControls({ metadata }: { metadata: Metadata }) {
   const [p, setP] = useSearchParams();
   const date = p.get("date") ?? "2026-01-16";
-  const [custom, setCustom] = useState("");
-  const [error, setError] = useState("");
   const changeDate = (nextDate: string) => {
     const next = new URLSearchParams(p);
     next.set("date", nextDate);
@@ -70,53 +68,7 @@ export function ReplayControls({ metadata }: { metadata: Metadata }) {
           setP(next);
         }}
       />
-      <details className="custom-cutoff">
-        <summary>Custom cutoff</summary>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (
-              !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(custom) ||
-              !Number.isFinite(Date.parse(custom))
-            ) {
-              setError(
-                "Enter a valid UTC instant with seconds, for example 2026-01-15T09:00:00Z.",
-              );
-              return;
-            }
-            const min = Date.parse(`${shiftDate(date, -7)}T00:00:00Z`);
-            const max = Date.parse(`${shiftDate(date, 2)}T00:00:00Z`);
-            if (Date.parse(custom) < min || Date.parse(custom) > max) {
-              setError(
-                "Cutoff must lie between 7 days before and 2 days after delivery at 00:00 London.",
-              );
-              return;
-            }
-            const next = new URLSearchParams(p);
-            next.set("cutoff", custom);
-            next.delete("rule");
-            setError("");
-            setP(next);
-          }}
-        >
-          <label>
-            Exact decision time (UTC)
-            <input
-              placeholder="2026-01-15T09:00:00Z"
-              value={custom}
-              onChange={(e) => setCustom(e.target.value)}
-              aria-invalid={!!error}
-            />
-          </label>
-          <p>
-            UTC input is unambiguous. Applied London time appears with the
-            result. Day navigation shifts this instant by the same number of
-            days within the January window.
-          </p>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit">Apply cutoff</button>
-        </form>
-      </details>
+      <CustomTime metadata={metadata} date={date} />
       <CopyButton value={location.href} />
     </section>
   );

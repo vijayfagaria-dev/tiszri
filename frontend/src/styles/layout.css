@@ -120,9 +120,10 @@
   color: #acbdd6;
 }
 .demo-banner select {
-  padding: 3px 22px 3px 8px;
+  padding: 3px 28px 3px 8px;
   font-size: 10px;
-  background: #0c2039;
+  background-color: #0c2039;
+  background-size: 10px;
 }
 .result-tools {
   display: flex;
@@ -245,9 +246,9 @@
 }
 .preset-label select {
   border-radius: 20px;
-  padding: 9px 30px 9px 15px;
+  padding: 9px 34px 9px 15px;
   color: #eef5ff;
-  background: #18385f;
+  background-color: #18385f;
   border: 1px solid #38578588;
   font-size: 12px;
 }
@@ -336,7 +337,7 @@
   .skeleton-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .help p {
+  .info-tip [role="tooltip"] {
     width: 210px;
   }
 }

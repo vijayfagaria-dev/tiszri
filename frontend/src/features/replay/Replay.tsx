@@ -5,11 +5,12 @@ import { useSearchParams } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
 import type { DayAnalysis } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
-import { Qualification, Warnings } from "../../components/ui";
+import { Warnings } from "../../components/ui";
 import { dayLabel, time } from "../../lib/format";
 import { statusLabels } from "../../lib/status";
 import { ForecastChart } from "./ForecastChart";
 import { ResponsiveInspector } from "./ResponsiveInspector";
+import { EmptyDay } from "./EmptyDay";
 export function Replay({
   result,
   refreshing,
@@ -34,6 +35,15 @@ export function Replay({
     setP(next);
   };
   const select = (period: number) => update("interval", String(period));
+  const backToDefault = {
+    label: "Switch to Morning before · 09:00",
+    run: () => {
+      const next = new URLSearchParams(p);
+      next.set("rule", "d1-0900");
+      next.delete("cutoff");
+      setP(next);
+    },
+  };
   useEffect(() => {
     if (p.has("interval") && p.get("interval") !== String(active)) {
       const next = new URLSearchParams(p);
@@ -69,71 +79,58 @@ export function Replay({
           <RefreshCw size={14} />
         </button>
       </section>
-      <Qualification data={data} />
       <Warnings
-        warnings={data.warnings}
+        warnings={visibleWarnings(data)}
         select={(instant) => {
           const i = data.intervals.find((i) => i.startTime === instant);
           if (i) select(i.settlementPeriod);
         }}
+        actions={{
+          HINDSIGHT_CUTOFF: backToDefault,
+          CUTOFF_INSIDE_DELIVERY_DAY: backToDefault,
+        }}
       />
-      {data.query.decisionCutoff.position !== "BEFORE_DELIVERY" && (
-        <button
-          className="hindsight-reset"
-          onClick={() => {
-            const next = new URLSearchParams(p);
-            next.set("rule", "d1-0900");
-            next.delete("cutoff");
-            setP(next);
-          }}
-        >
-          Switch to Morning before
-        </button>
-      )}
-      {data.resultState === "EMPTY" && (
-        <section className="panel empty-panel">
-          <h2>No matched evidence at this decision time</h2>
-          <p>
-            Missing intervals remain visible below; they are excluded from all
-            metrics.
-          </p>
-          {data.highlights.earliestCoveringPublishTime && (
-            <button
-              onClick={() => {
-                const next = new URLSearchParams(p);
-                next.set(
-                  "cutoff",
-                  data.highlights.earliestCoveringPublishTime!,
-                );
-                next.delete("rule");
-                setP(next);
-              }}
-            >
-              Use earliest covering forecast
-            </button>
-          )}
-        </section>
-      )}
-      <div className="replay-layout">
-        <QuickSummary data={data} />
-        <div className="replay-center">
-          <ForecastChart data={data} active={active} select={select} />
-          <IntervalLedger
-            data={data}
-            active={active}
-            filter={filter}
-            sort={sort}
-            select={select}
-            onSort={(value) => update("sort", value)}
-            onFilter={(value) => update("filter", value)}
-          />
+      {data.resultState === "EMPTY" ? (
+        <EmptyDay data={data} />
+      ) : (
+        <div className="replay-layout">
+          <QuickSummary data={data} />
+          <div className="replay-center">
+            <ForecastChart data={data} active={active} select={select} />
+            <IntervalLedger
+              data={data}
+              active={active}
+              filter={filter}
+              sort={sort}
+              select={select}
+              onSort={(value) => update("sort", value)}
+              onFilter={(value) => update("filter", value)}
+            />
+          </div>
+          {interval && <ResponsiveInspector interval={interval} data={data} />}
         </div>
-        {interval && <ResponsiveInspector interval={interval} data={data} />}
-      </div>
+      )}
       <p role="status" className="sr-only">
         Selected interval {active},{" "}
         {interval ? statusLabels[interval.status] : ""}. Filter: {filter}.
       </p>
     </>
   );
+}
+
+// Leave out warnings that something else on the page already says.
+function visibleWarnings(data: DayAnalysis) {
+  const codes = data.warnings.map((w) => w.code);
+  const hidden = [
+    // the empty-day panel explains these
+    ...(data.resultState === "EMPTY"
+      ? ["NO_MATCHED_INTERVALS", "NEWER_VERSION_AFTER_CUTOFF"]
+      : []),
+    // implied by a decision made during or after delivery
+    ...(codes.includes("HINDSIGHT_CUTOFF") ||
+    codes.includes("CUTOFF_INSIDE_DELIVERY_DAY")
+      ? ["ISSUED_AFTER_DELIVERY_START"]
+      : []),
+  ];
+  return data.warnings.filter((w) => !hidden.includes(w.code));
 }

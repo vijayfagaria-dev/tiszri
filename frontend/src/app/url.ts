@@ -21,6 +21,17 @@ export const ruleAlias = (rule: Rule, metadata: Metadata) =>
         p.rule.localTime === rule.localTime,
     )?.id ?? ""
   ] ?? `custom:${rule.dayOffset}:${rule.localTime}`;
+// "d1-0900" or "custom:-3:09:00" back to a rule; null if it is neither.
+export function ruleFromAlias(alias: string, metadata: Metadata): Rule | null {
+  const preset = metadata.cutoff.presets.find(
+    (item) => aliases[item.id] === alias,
+  );
+  const custom = /^custom:(-?\d):([0-2]\d:[0-5]\d)$/.exec(alias);
+  return (
+    preset?.rule ??
+    (custom ? { dayOffset: Number(custom[1]), localTime: custom[2] } : null)
+  );
+}
 export function canonicalParams(
   search: URLSearchParams,
   replay: boolean,
@@ -70,15 +81,10 @@ export function apiParams(
       );
     result.set("decisionCutoff", value);
   } else {
-    const alias =
-      p.get("rule") ?? ruleAlias(metadata.cutoff.defaultRule, metadata);
-    const preset = metadata.cutoff.presets.find(
-      (item) => aliases[item.id] === alias,
+    const rule = ruleFromAlias(
+      p.get("rule") ?? ruleAlias(metadata.cutoff.defaultRule, metadata),
+      metadata,
     );
-    const custom = /^custom:(-?\d):([0-2]\d:[0-5]\d)$/.exec(alias);
-    const rule =
-      preset?.rule ??
-      (custom ? { dayOffset: Number(custom[1]), localTime: custom[2] } : null);
     if (!rule)
       throw new Error(
         "Unknown decision-time rule. Select a preset to continue.",
