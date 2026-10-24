@@ -1,0 +1,190 @@
+import { DailyPerformance } from "./DailyPerformance";
+import { FeaturedReplays } from "./FeaturedReplays";
+import { ErrorDistribution } from "./ErrorDistribution";
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  Info,
+  Sparkles,
+  Wind,
+} from "lucide-react";
+import type { Metadata, Summary } from "../../api/schemas";
+import type { ApiResult } from "../../api/client";
+import {
+  MetricsGrid,
+  PresetSelect,
+  Qualification,
+  Warnings,
+} from "../../components/ui";
+import { WindArt } from "../../components/WindArt";
+import { dateLabel, percent } from "../../lib/format";
+import { replayLink } from "../../app/url";
+import { Receipts } from "../receipts/Receipts";
+export function Overview({
+  result,
+  metadata,
+}: {
+  result: ApiResult<Summary>;
+  metadata: Metadata;
+}) {
+  const data = result.response;
+  const [search, setSearch] = useSearchParams();
+  const over = (data.metrics.overShare ?? 0) >= (data.metrics.underShare ?? 0);
+  const share = over ? data.metrics.overShare : data.metrics.underShare;
+  const change = (key: string, value: string) => {
+    const next = new URLSearchParams(search);
+    next.set(key, value);
+    setSearch(next);
+  };
+  return (
+    <>
+      <section className="overview-hero">
+        <WindArt />
+        <div className="hero-heading">
+          <p className="eyebrow">
+            <Sparkles size={13} />
+            JANUARY, DECODED.
+          </p>
+          <div className="decision-control">
+            <PresetSelect
+              metadata={metadata}
+              value={search.get("rule") ?? "d1-0900"}
+              onChange={(v) => change("rule", v)}
+            />
+            <details className="help">
+              <summary aria-label="About the decision time">
+                <Info size={16} />
+              </summary>
+              <p>
+                Only forecasts published at or before this time are eligible.
+                09:00 is an editable default, not a market rule.
+              </p>
+            </details>
+          </div>
+        </div>
+        <div className="hero-content">
+          <article className="trust-card">
+            <h1>
+              How far could the
+              <br />
+              forecast be <em>trusted?</em>
+            </h1>
+            <p className="hero-description">
+              {data.resultState === "EMPTY"
+                ? "There is no matched evidence at this decision time."
+                : over
+                  ? "The forecast expected more wind than actually arrived in most matched half-hours."
+                  : "The forecast expected less wind than actually arrived in most matched half-hours."}
+            </p>
+            <div className="trust-stat">
+              <strong>
+                {share == null ? "—" : `${Math.round(share * 100)}%`}
+              </strong>
+              <span>
+                of matched half-hours
+                <br />
+                forecast <b>{over ? "too high" : "too low"}</b>
+              </span>
+            </div>
+            <div
+              className="direction-bar"
+              role="img"
+              aria-label={`Too high ${percent(data.metrics.overShare ?? 0)}, too low ${percent(data.metrics.underShare ?? 0)}, exact ${data.metrics.directionCounts.exact} intervals`}
+            >
+              <span
+                style={{ width: `${(data.metrics.overShare ?? 0) * 100}%` }}
+              />
+              <span
+                style={{ width: `${(data.metrics.underShare ?? 0) * 100}%` }}
+              />
+            </div>
+            <div className="direction-labels">
+              <span>
+                <ArrowUp size={16} />
+                Too high{" "}
+                <b>
+                  {data.metrics.overShare == null
+                    ? "Unavailable"
+                    : percent(data.metrics.overShare)}
+                </b>
+              </span>
+              <span>
+                <ArrowDown size={16} />
+                Too low{" "}
+                <b>
+                  {data.metrics.underShare == null
+                    ? "Unavailable"
+                    : percent(data.metrics.underShare)}
+                </b>
+              </span>
+            </div>
+            {data.metrics.directionCounts.exact > 0 && (
+              <small>
+                {data.metrics.directionCounts.exact} exact half-hours
+              </small>
+            )}
+          </article>
+          <div className="hero-metrics">
+            <MetricsGrid
+              metrics={data.metrics}
+              coverage={data.metadata.coverage}
+              expected={data.metadata.counts.expected}
+            />
+          </div>
+          <aside className="glance panel">
+            <div className="glance-art">
+              <WindArt small />
+              <Wind size={44} strokeWidth={1} />
+              <svg viewBox="0 0 90 90" className="turbine" aria-hidden="true">
+                <path
+                  d="M48 75 45 32M45 32 30 8M45 32 76 27M45 32 28 57"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <circle cx="45" cy="32" r="3" fill="currentColor" />
+              </svg>
+            </div>
+            <p className="eyebrow">THE BIG PICTURE</p>
+            <h2>
+              Wind forecast
+              <br />
+              at a glance
+            </h2>
+            <p>
+              {dateLabel(data.query.from)} – {dateLabel(data.query.to, true)}
+            </p>
+            <small>GB National Wind · Europe/London</small>
+            <div className="glance-line" />
+            <p className="scope">
+              <Info size={17} />
+              This shows wind forecast accuracy only. It does not estimate how
+              much electricity to buy.
+            </p>
+          </aside>
+        </div>
+      </section>
+      <Qualification data={data} />
+      <Warnings warnings={data.warnings} />
+      <DailyPerformance
+        data={data}
+        metadata={metadata}
+        search={search}
+        onViewChange={(view) => change("view", view)}
+      />
+      <FeaturedReplays data={data} metadata={metadata} search={search} />
+      <ErrorDistribution data={data} />
+      <Receipts result={result} metadata={metadata} />
+      <div className="overview-footnote">
+        <span>
+          Decisions made in January 2026 · Inclusive delivery window shown above
+        </span>
+        <Link to={replayLink("2026-01-16", data.query.rule, metadata, search)}>
+          Open the replay workbench <ArrowRight size={15} />
+        </Link>
+      </div>
+    </>
+  );
+}
