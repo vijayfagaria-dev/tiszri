@@ -142,9 +142,10 @@ test("keyboard selection, mobile evidence sheet and focus restoration", async ({
   await slider.focus();
   await slider.press("ArrowRight");
   await expect(page).toHaveURL(/interval=2/);
-  const trigger = page
-    .getByRole("button", { name: "Inspect interval 2", exact: true })
-    .last();
+  // The ledger row has the same name, so target the sheet's own button and
+  // wait for it to re-render with the new interval before opening it.
+  const trigger = page.locator(".mobile-inspector-trigger");
+  await expect(trigger).toHaveText("Inspect interval 2");
   await trigger.click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByRole("dialog")).toContainText("Interval 2 uses");
