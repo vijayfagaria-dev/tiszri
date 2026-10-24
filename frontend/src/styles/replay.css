@@ -396,8 +396,9 @@
   background: linear-gradient(135deg, #738bff, #8561d9);
   cursor: pointer;
 }
-.vintage-ribbon > span.active,
-.error-fingerprint > span.active {
+.vintage-ribbon > span.active {
+  position: relative;
+  z-index: 1;
   outline: 2px solid #c0e8ff;
   outline-offset: 2px;
 }
@@ -434,6 +435,14 @@
   max-height: 32px;
   border-radius: 2px 2px 0 0;
   background: #b58cea;
+}
+.error-fingerprint > span.active {
+  z-index: 1;
+  background: #c0e8ff0d;
+}
+.error-fingerprint > span.active > i {
+  outline: 2px solid #c0e8ff;
+  outline-offset: 2px;
 }
 .error-fingerprint > span.under > i {
   top: 50%;
