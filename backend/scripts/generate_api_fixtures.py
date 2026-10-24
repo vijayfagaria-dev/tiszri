@@ -120,21 +120,6 @@ SCENARIOS = [
     ),
     Scenario("error_422_date-out-of-range", "/wind-analysis", {"deliveryDate": "2026-03-01"}),
     Scenario(
-        "error_422_naive-cutoff",
-        "/wind-analysis",
-        {"deliveryDate": "2026-01-16", "decisionCutoff": "2026-01-15T09:00:00"},
-    ),
-    Scenario(
-        "error_422_mutually-exclusive",
-        "/wind-analysis",
-        {
-            "deliveryDate": "2026-01-16",
-            "decisionCutoff": "2026-01-15T09:00:00Z",
-            "cutoffDayOffset": "-1",
-            "cutoffLocalTime": "09:00",
-        },
-    ),
-    Scenario(
         "error_502_upstream-unavailable",
         "/wind-analysis",
         {"deliveryDate": "2026-01-16"},
@@ -256,6 +241,8 @@ async def build_fixtures() -> dict[str, tuple[Scenario, int, Any]]:
 
 def write(built: dict[str, tuple[Scenario, int, Any]]) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in OUTPUT_DIR.glob("*.json"):  # drop files of scenarios that no longer exist
+        old.unlink()
     index = []
     for name, (scenario, status, body) in built.items():
         (OUTPUT_DIR / f"{name}.json").write_text(json.dumps(body, indent=2) + "\n")

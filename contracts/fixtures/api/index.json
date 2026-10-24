@@ -186,34 +186,6 @@
     "description": ""
   },
   {
-    "file": "error_422_naive-cutoff.json",
-    "status": 422,
-    "request": {
-      "path": "/api/v1/wind-analysis",
-      "params": {
-        "deliveryDate": "2026-01-16",
-        "decisionCutoff": "2026-01-15T09:00:00"
-      }
-    },
-    "source": "recorded",
-    "description": ""
-  },
-  {
-    "file": "error_422_mutually-exclusive.json",
-    "status": 422,
-    "request": {
-      "path": "/api/v1/wind-analysis",
-      "params": {
-        "deliveryDate": "2026-01-16",
-        "decisionCutoff": "2026-01-15T09:00:00Z",
-        "cutoffDayOffset": "-1",
-        "cutoffLocalTime": "09:00"
-      }
-    },
-    "source": "recorded",
-    "description": ""
-  },
-  {
     "file": "error_502_upstream-unavailable.json",
     "status": 502,
     "request": {
