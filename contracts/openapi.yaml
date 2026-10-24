@@ -1,0 +1,864 @@
+openapi: 3.1.0
+info:
+  title: Wind Forecast Intelligence API
+  version: 1.0.0
+  description: |
+    Historical decision replay and accuracy analysis for GB national wind generation.
+    Actuals come from Elexon FUELHH (fuelType WIND); forecasts come from Elexon WINDFOR.
+
+    Conventions:
+    - Instants are RFC 3339 UTC with a `Z` suffix and second precision.
+    - Power values are in MW. Source generation values are integers; derived metrics are unrounded.
+    - Missing values are `null` together with an explicit status or reason, never `0`.
+    - Every field listed in a schema is always present. Clients must ignore unknown fields.
+servers:
+  - url: /api/v1
+
+paths:
+  /metadata:
+    get:
+      operationId: getMetadata
+      summary: Static configuration, presets, units, policies and metric definitions
+      responses:
+        "200":
+          description: Metadata
+          headers:
+            X-Request-ID: { $ref: "#/components/headers/RequestId" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AppMetadata" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /wind-analysis:
+    get:
+      operationId: getWindAnalysis
+      summary: Replay one delivery day as known at a decision time
+      description: |
+        Send either `decisionCutoff` or the `cutoffDayOffset` + `cutoffLocalTime` pair, not both.
+        When neither is sent, the default rule is applied and echoed with `source: DEFAULT`.
+      parameters:
+        - name: deliveryDate
+          in: query
+          required: true
+          schema: { $ref: "#/components/schemas/LocalDate" }
+        - name: decisionCutoff
+          in: query
+          required: false
+          description: Exact decision time with `Z` or an offset; no fractional seconds. Prefer the `Z` form.
+          schema: { type: string, maxLength: 64 }
+        - $ref: "#/components/parameters/CutoffDayOffset"
+        - $ref: "#/components/parameters/CutoffLocalTime"
+      responses:
+        "200":
+          description: Analysis (including EMPTY results with no matched intervals)
+          headers:
+            X-Request-ID: { $ref: "#/components/headers/RequestId" }
+            Server-Timing: { $ref: "#/components/headers/ServerTiming" }
+            Cache-Control: { $ref: "#/components/headers/CacheControl" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DayAnalysis" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /accuracy-summary:
+    get:
+      operationId: getAccuracySummary
+      summary: Pooled accuracy across a window of delivery dates at a relative decision time
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema: { $ref: "#/components/schemas/LocalDate" }
+        - name: to
+          in: query
+          required: false
+          schema: { $ref: "#/components/schemas/LocalDate" }
+        - $ref: "#/components/parameters/CutoffDayOffset"
+        - $ref: "#/components/parameters/CutoffLocalTime"
+      responses:
+        "200":
+          description: Accuracy summary
+          headers:
+            X-Request-ID: { $ref: "#/components/headers/RequestId" }
+            Server-Timing: { $ref: "#/components/headers/ServerTiming" }
+            Cache-Control: { $ref: "#/components/headers/CacheControl" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccuracySummary" }
+        default: { $ref: "#/components/responses/Error" }
+
+  /health/live:
+    get:
+      operationId: getLiveness
+      summary: Process liveness
+      responses:
+        "200":
+          description: Alive
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Liveness" }
+
+  /health/ready:
+    get:
+      operationId: getReadiness
+      summary: Readiness, including cached upstream reachability
+      responses:
+        "200":
+          description: Ready
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Readiness" }
+        "503":
+          description: Not ready
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Readiness" }
+
+components:
+  parameters:
+    CutoffDayOffset:
+      name: cutoffDayOffset
+      in: query
+      required: false
+      description: Local calendar days relative to the delivery date (send together with cutoffLocalTime).
+      schema: { type: integer, minimum: -7, maximum: 2 }
+    CutoffLocalTime:
+      name: cutoffLocalTime
+      in: query
+      required: false
+      description: Europe/London wall time `HH:MM` (send together with cutoffDayOffset).
+      schema: { $ref: "#/components/schemas/LocalTime" }
+
+  headers:
+    RequestId:
+      description: Request correlation identifier, also present in response bodies.
+      schema: { type: string }
+    ServerTiming:
+      description: "`fetch`, `analyze` and `total` durations in milliseconds."
+      schema: { type: string }
+    CacheControl:
+      description: Caching policy; analysis responses are cacheable by full URL.
+      schema: { type: string }
+
+  responses:
+    Error:
+      description: Error (validation 422, rate limit 429, upstream 502/503/504, internal 500)
+      headers:
+        X-Request-ID: { $ref: "#/components/headers/RequestId" }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+  schemas:
+    # ---------- Primitives ----------
+    Instant:
+      type: string
+      pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    OffsetDateTime:
+      type: string
+      pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$"
+    LocalDate:
+      type: string
+      pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    LocalTime:
+      type: string
+      pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
+    NullableNumber:
+      type: [number, "null"]
+
+    # ---------- Enums ----------
+    ResultState:
+      type: string
+      enum: [COMPLETE, PARTIAL, EMPTY]
+    IntervalStatus:
+      type: string
+      enum:
+        - MATCHED
+        - FORECAST_NOT_YET_PUBLISHED
+        - FORECAST_MISSING
+        - ACTUAL_MISSING
+        - FULLY_MISSING
+        - INVALID_VALUE
+        - AMBIGUOUS_FORECAST
+        - AMBIGUOUS_ACTUAL
+    Direction:
+      type: string
+      enum: [OVER, UNDER, EXACT]
+    CutoffSource:
+      type: string
+      enum: [EXPLICIT, RULE, DEFAULT]
+    CutoffPosition:
+      type: string
+      enum: [BEFORE_DELIVERY, INSIDE_DELIVERY, AFTER_DELIVERY]
+    IntervalFlag:
+      type: string
+      enum:
+        - ISSUED_AFTER_DELIVERY_START
+        - DUPLICATE_EQUIVALENT_FORECAST
+        - DUPLICATE_EQUIVALENT_ACTUAL
+        - ACTUAL_TIMESTAMP_INCONSISTENT
+    UnitStatus:
+      type: string
+      enum: [VERIFIED, PENDING_VERIFICATION]
+    CacheStatus:
+      type: string
+      enum: [HIT, MISS, STALE, BYPASS]
+    Severity:
+      type: string
+      enum: [INFO, WARNING]
+    WarningScope:
+      type: string
+      enum: [ANALYSIS, INTERVAL, SOURCE]
+    WarningCode:
+      type: string
+      enum:
+        - PARTIAL_COVERAGE
+        - NO_MATCHED_INTERVALS
+        - NO_SOURCE_DATA
+        - SOURCE_ROWS_REJECTED
+        - NEWER_VERSION_AFTER_CUTOFF
+        - CUTOFF_INSIDE_DELIVERY_DAY
+        - HINDSIGHT_CUTOFF
+        - ISSUED_AFTER_DELIVERY_START
+        - DUPLICATE_EQUIVALENT
+        - DUPLICATE_CONFLICT
+        - UNIT_PENDING_VERIFICATION
+        - FORECAST_RESOLUTION_IRREGULAR
+        - ACTUAL_TIMESTAMP_INCONSISTENT
+        - RETRIEVAL_WINDOW_MAY_BE_INSUFFICIENT
+    ErrorCode:
+      type: string
+      enum:
+        - INVALID_PARAMETER
+        - INVALID_DELIVERY_DATE
+        - INVALID_DATE_RANGE
+        - INVALID_CUTOFF
+        - INVALID_CUTOFF_RULE
+        - CUTOFF_OUT_OF_RANGE
+        - NOT_FOUND
+        - METHOD_NOT_ALLOWED
+        - RATE_LIMITED
+        - UPSTREAM_TIMEOUT
+        - UPSTREAM_UNAVAILABLE
+        - UPSTREAM_RATE_LIMITED
+        - UPSTREAM_REJECTED_REQUEST
+        - UPSTREAM_MALFORMED_RESPONSE
+        - INTERNAL_ERROR
+    FeaturedKind:
+      type: string
+      enum: [WORST_DAY, BEST_DAY, BIAS_HIDES_ERROR, OFF_SCHEDULE_VINTAGE]
+    PresetId:
+      type: string
+      enum:
+        - TWO_DAYS_BEFORE_0900
+        - MORNING_BEFORE_0900
+        - NOON_BEFORE_1200
+        - DELIVERY_START_0000
+        - AFTER_DELIVERY_0000
+    Dataset:
+      type: string
+      enum: [FUELHH, WINDFOR]
+    DatasetRole:
+      type: string
+      enum: [ACTUAL, FORECAST]
+
+    # ---------- Decision time ----------
+    CutoffRule:
+      type: object
+      additionalProperties: false
+      required: [dayOffset, localTime]
+      properties:
+        dayOffset: { type: integer, minimum: -7, maximum: 2 }
+        localTime: { $ref: "#/components/schemas/LocalTime" }
+    AppliedCutoff:
+      type: object
+      additionalProperties: false
+      required: [utc, london, source, rule, presetId, position]
+      properties:
+        utc: { $ref: "#/components/schemas/Instant" }
+        london: { $ref: "#/components/schemas/OffsetDateTime" }
+        source: { $ref: "#/components/schemas/CutoffSource" }
+        rule:
+          anyOf:
+            - { $ref: "#/components/schemas/CutoffRule" }
+            - { type: "null" }
+        presetId:
+          anyOf:
+            - { $ref: "#/components/schemas/PresetId" }
+            - { type: "null" }
+        position: { $ref: "#/components/schemas/CutoffPosition" }
+
+    # ---------- Shared analysis types ----------
+    UnitInfo:
+      type: object
+      additionalProperties: false
+      required: [unit, meaning, status, evidence]
+      properties:
+        unit: { type: string }
+        meaning: { type: string }
+        status: { $ref: "#/components/schemas/UnitStatus" }
+        evidence: { type: string }
+    UnitSummary:
+      type: object
+      additionalProperties: false
+      required: [label, actual, forecast]
+      properties:
+        label: { type: string }
+        actual: { $ref: "#/components/schemas/UnitInfo" }
+        forecast: { $ref: "#/components/schemas/UnitInfo" }
+    DirectionCounts:
+      type: object
+      additionalProperties: false
+      required: [over, under, exact]
+      properties:
+        over: { type: integer, minimum: 0 }
+        under: { type: integer, minimum: 0 }
+        exact: { type: integer, minimum: 0 }
+    Metrics:
+      type: object
+      additionalProperties: false
+      required: [n, mae, rmse, bias, directionCounts, signConvention, qualified, unavailableReason]
+      properties:
+        n: { type: integer, minimum: 0 }
+        mae: { $ref: "#/components/schemas/NullableNumber" }
+        rmse: { $ref: "#/components/schemas/NullableNumber" }
+        bias: { $ref: "#/components/schemas/NullableNumber" }
+        directionCounts: { $ref: "#/components/schemas/DirectionCounts" }
+        signConvention: { const: FORECAST_MINUS_ACTUAL }
+        qualified: { type: boolean }
+        unavailableReason:
+          anyOf:
+            - { const: NO_MATCHED_INTERVALS }
+            - { type: "null" }
+    StatusCounts:
+      type: object
+      additionalProperties: false
+      required:
+        - MATCHED
+        - FORECAST_NOT_YET_PUBLISHED
+        - FORECAST_MISSING
+        - ACTUAL_MISSING
+        - FULLY_MISSING
+        - INVALID_VALUE
+        - AMBIGUOUS_FORECAST
+        - AMBIGUOUS_ACTUAL
+      properties:
+        MATCHED: { type: integer, minimum: 0 }
+        FORECAST_NOT_YET_PUBLISHED: { type: integer, minimum: 0 }
+        FORECAST_MISSING: { type: integer, minimum: 0 }
+        ACTUAL_MISSING: { type: integer, minimum: 0 }
+        FULLY_MISSING: { type: integer, minimum: 0 }
+        INVALID_VALUE: { type: integer, minimum: 0 }
+        AMBIGUOUS_FORECAST: { type: integer, minimum: 0 }
+        AMBIGUOUS_ACTUAL: { type: integer, minimum: 0 }
+    Counts:
+      type: object
+      additionalProperties: false
+      required: [expected, matched, excluded, byStatus]
+      properties:
+        expected: { type: integer, minimum: 0 }
+        matched: { type: integer, minimum: 0 }
+        excluded: { type: integer, minimum: 0 }
+        byStatus: { $ref: "#/components/schemas/StatusCounts" }
+    RequestedRange:
+      type: object
+      additionalProperties: false
+      required: [from, to, basis]
+      properties:
+        from: { type: string }
+        to: { type: string }
+        basis: { type: string, enum: [SETTLEMENT_DATE, PUBLISH_TIME] }
+    VersionCounts:
+      type: object
+      additionalProperties: false
+      required: [coveringDay, eligible, afterCutoff]
+      properties:
+        coveringDay: { type: integer, minimum: 0 }
+        eligible: { type: integer, minimum: 0 }
+        afterCutoff: { type: integer, minimum: 0 }
+    SourceProvenance:
+      type: object
+      additionalProperties: false
+      required:
+        [dataset, role, filter, requestedRange, rowsReceived, rowsRejected, rowsFiltered, fetchedAt, cache, versions]
+      properties:
+        dataset: { $ref: "#/components/schemas/Dataset" }
+        role: { $ref: "#/components/schemas/DatasetRole" }
+        filter:
+          anyOf:
+            - type: object
+              additionalProperties: { type: string }
+            - { type: "null" }
+        requestedRange: { $ref: "#/components/schemas/RequestedRange" }
+        rowsReceived: { type: integer, minimum: 0 }
+        rowsRejected: { type: integer, minimum: 0 }
+        rowsFiltered: { type: integer, minimum: 0 }
+        fetchedAt: { $ref: "#/components/schemas/Instant" }
+        cache: { $ref: "#/components/schemas/CacheStatus" }
+        versions:
+          anyOf:
+            - { $ref: "#/components/schemas/VersionCounts" }
+            - { type: "null" }
+    PolicyIds:
+      type: object
+      additionalProperties: false
+      required: [selection, mapping, duplicates]
+      properties:
+        selection: { type: string }
+        mapping: { type: string }
+        duplicates: { type: string }
+    Resolution:
+      type: object
+      additionalProperties: false
+      required: [deliveryMinutes, forecastMinutes]
+      properties:
+        deliveryMinutes: { type: integer }
+        forecastMinutes: { type: integer }
+    Warning:
+      type: object
+      additionalProperties: false
+      required: [code, severity, scope, message, affectedCount, affectedIntervals, data]
+      properties:
+        code: { $ref: "#/components/schemas/WarningCode" }
+        severity: { $ref: "#/components/schemas/Severity" }
+        scope: { $ref: "#/components/schemas/WarningScope" }
+        message: { type: string }
+        affectedCount: { type: integer, minimum: 0 }
+        affectedIntervals:
+          type: array
+          items: { $ref: "#/components/schemas/Instant" }
+        data:
+          type: [object, "null"]
+
+    # ---------- /wind-analysis ----------
+    AnalysisQuery:
+      type: object
+      additionalProperties: false
+      required: [deliveryDate, decisionCutoff, businessTimezone]
+      properties:
+        deliveryDate: { $ref: "#/components/schemas/LocalDate" }
+        decisionCutoff: { $ref: "#/components/schemas/AppliedCutoff" }
+        businessTimezone: { const: Europe/London }
+    AnalysisMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        [contractVersion, algorithmVersion, requestId, generatedAt, sources, unit, resolution, policyIds, counts, coverage]
+      properties:
+        contractVersion: { type: string }
+        algorithmVersion: { type: string }
+        requestId: { type: string }
+        generatedAt: { $ref: "#/components/schemas/Instant" }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/SourceProvenance" }
+        unit: { $ref: "#/components/schemas/UnitSummary" }
+        resolution: { $ref: "#/components/schemas/Resolution" }
+        policyIds: { $ref: "#/components/schemas/PolicyIds" }
+        counts: { $ref: "#/components/schemas/Counts" }
+        coverage: { type: number, minimum: 0, maximum: 1 }
+    Highlights:
+      type: object
+      additionalProperties: false
+      required: [largestOver, largestUnder, versionsUsed, earliestCoveringPublishTime, newerVersionAfterCutoff]
+      properties:
+        largestOver:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+        largestUnder:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+        versionsUsed:
+          type: array
+          items: { $ref: "#/components/schemas/Instant" }
+        earliestCoveringPublishTime:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+        newerVersionAfterCutoff:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+    IntervalForecast:
+      type: object
+      additionalProperties: false
+      required: [generation, publishTime, periodStart, periodEnd, leadMinutes, ageAtCutoffMinutes]
+      properties:
+        generation: { type: [integer, "null"] }
+        publishTime: { $ref: "#/components/schemas/Instant" }
+        periodStart: { $ref: "#/components/schemas/Instant" }
+        periodEnd: { $ref: "#/components/schemas/Instant" }
+        leadMinutes: { type: integer }
+        ageAtCutoffMinutes: { type: integer, minimum: 0 }
+    IntervalSelection:
+      type: object
+      additionalProperties: false
+      required: [eligibleCount, laterCount, earliestLaterPublishTime, conflictingValues]
+      properties:
+        eligibleCount: { type: integer, minimum: 0 }
+        laterCount: { type: integer, minimum: 0 }
+        earliestLaterPublishTime:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+        conflictingValues:
+          type: [array, "null"]
+          items: { type: integer }
+    IntervalActual:
+      type: object
+      additionalProperties: false
+      required: [generation, publishTime, conflictingValues]
+      properties:
+        generation: { type: [integer, "null"] }
+        publishTime:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+        conflictingValues:
+          type: [array, "null"]
+          items: { type: integer }
+    IntervalError:
+      type: object
+      additionalProperties: false
+      required: [signed, absolute, direction]
+      properties:
+        signed: { type: integer }
+        absolute: { type: integer, minimum: 0 }
+        direction: { $ref: "#/components/schemas/Direction" }
+    Interval:
+      type: object
+      additionalProperties: false
+      required:
+        [settlementPeriod, startTime, endTime, status, exclusionReason, forecast, selection, actual, error, flags]
+      properties:
+        settlementPeriod: { type: integer, minimum: 1, maximum: 50 }
+        startTime: { $ref: "#/components/schemas/Instant" }
+        endTime: { $ref: "#/components/schemas/Instant" }
+        status: { $ref: "#/components/schemas/IntervalStatus" }
+        exclusionReason: { type: [string, "null"] }
+        forecast:
+          anyOf: [{ $ref: "#/components/schemas/IntervalForecast" }, { type: "null" }]
+        selection: { $ref: "#/components/schemas/IntervalSelection" }
+        actual:
+          anyOf: [{ $ref: "#/components/schemas/IntervalActual" }, { type: "null" }]
+        error:
+          anyOf: [{ $ref: "#/components/schemas/IntervalError" }, { type: "null" }]
+        flags:
+          type: array
+          items: { $ref: "#/components/schemas/IntervalFlag" }
+    DayAnalysis:
+      type: object
+      additionalProperties: false
+      required: [resultState, query, metadata, metrics, highlights, intervals, warnings]
+      properties:
+        resultState: { $ref: "#/components/schemas/ResultState" }
+        query: { $ref: "#/components/schemas/AnalysisQuery" }
+        metadata: { $ref: "#/components/schemas/AnalysisMetadata" }
+        metrics: { $ref: "#/components/schemas/Metrics" }
+        highlights: { $ref: "#/components/schemas/Highlights" }
+        intervals:
+          type: array
+          items: { $ref: "#/components/schemas/Interval" }
+        warnings:
+          type: array
+          items: { $ref: "#/components/schemas/Warning" }
+
+    # ---------- /accuracy-summary ----------
+    SummaryQuery:
+      type: object
+      additionalProperties: false
+      required: [from, to, rule, ruleSource, presetId, businessTimezone]
+      properties:
+        from: { $ref: "#/components/schemas/LocalDate" }
+        to: { $ref: "#/components/schemas/LocalDate" }
+        rule: { $ref: "#/components/schemas/CutoffRule" }
+        ruleSource: { type: string, enum: [RULE, DEFAULT] }
+        presetId:
+          anyOf: [{ $ref: "#/components/schemas/PresetId" }, { type: "null" }]
+        businessTimezone: { const: Europe/London }
+    SummaryMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        [contractVersion, algorithmVersion, requestId, generatedAt, sources, unit, resolution, policyIds, counts, coverage, dayCount]
+      properties:
+        contractVersion: { type: string }
+        algorithmVersion: { type: string }
+        requestId: { type: string }
+        generatedAt: { $ref: "#/components/schemas/Instant" }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/SourceProvenance" }
+        unit: { $ref: "#/components/schemas/UnitSummary" }
+        resolution: { $ref: "#/components/schemas/Resolution" }
+        policyIds: { $ref: "#/components/schemas/PolicyIds" }
+        counts: { $ref: "#/components/schemas/Counts" }
+        coverage: { type: number, minimum: 0, maximum: 1 }
+        dayCount: { type: integer, minimum: 1 }
+    SummaryMetrics:
+      type: object
+      additionalProperties: false
+      required:
+        [n, mae, rmse, bias, directionCounts, overShare, underShare, signConvention, qualified, unavailableReason]
+      properties:
+        n: { type: integer, minimum: 0 }
+        mae: { $ref: "#/components/schemas/NullableNumber" }
+        rmse: { $ref: "#/components/schemas/NullableNumber" }
+        bias: { $ref: "#/components/schemas/NullableNumber" }
+        directionCounts: { $ref: "#/components/schemas/DirectionCounts" }
+        overShare: { $ref: "#/components/schemas/NullableNumber" }
+        underShare: { $ref: "#/components/schemas/NullableNumber" }
+        signConvention: { const: FORECAST_MINUS_ACTUAL }
+        qualified: { type: boolean }
+        unavailableReason:
+          anyOf:
+            - { const: NO_MATCHED_INTERVALS }
+            - { type: "null" }
+    HistogramBin:
+      type: object
+      additionalProperties: false
+      required: [lowerEdge, upperEdge, count]
+      properties:
+        lowerEdge: { type: integer }
+        upperEdge: { type: integer }
+        count: { type: integer, minimum: 0 }
+    Distribution:
+      type: object
+      additionalProperties: false
+      required: [absError, signedError, histogram]
+      properties:
+        absError:
+          type: [object, "null"]
+          additionalProperties: false
+          required: [p50, p90, p95]
+          properties:
+            p50: { type: integer }
+            p90: { type: integer }
+            p95: { type: integer }
+        signedError:
+          type: [object, "null"]
+          additionalProperties: false
+          required: [p10, p90]
+          properties:
+            p10: { type: integer }
+            p90: { type: integer }
+        histogram:
+          type: object
+          additionalProperties: false
+          required: [binWidth, bins]
+          properties:
+            binWidth: { type: integer }
+            bins:
+              type: array
+              items: { $ref: "#/components/schemas/HistogramBin" }
+    DaySummary:
+      type: object
+      additionalProperties: false
+      required: [deliveryDate, cutoff, resultState, expected, matched, mae, rmse, bias, directionCounts]
+      properties:
+        deliveryDate: { $ref: "#/components/schemas/LocalDate" }
+        cutoff: { $ref: "#/components/schemas/AppliedCutoff" }
+        resultState: { $ref: "#/components/schemas/ResultState" }
+        expected: { type: integer, minimum: 0 }
+        matched: { type: integer, minimum: 0 }
+        mae: { $ref: "#/components/schemas/NullableNumber" }
+        rmse: { $ref: "#/components/schemas/NullableNumber" }
+        bias: { $ref: "#/components/schemas/NullableNumber" }
+        directionCounts: { $ref: "#/components/schemas/DirectionCounts" }
+    FeaturedDay:
+      type: object
+      additionalProperties: false
+      required: [kind, deliveryDate, suggestedRule, data]
+      properties:
+        kind: { $ref: "#/components/schemas/FeaturedKind" }
+        deliveryDate: { $ref: "#/components/schemas/LocalDate" }
+        suggestedRule: { $ref: "#/components/schemas/CutoffRule" }
+        data: { type: object }
+    SensitivityMetrics:
+      type: object
+      additionalProperties: false
+      required: [n, mae, rmse, bias]
+      properties:
+        n: { type: integer, minimum: 0 }
+        mae: { $ref: "#/components/schemas/NullableNumber" }
+        rmse: { $ref: "#/components/schemas/NullableNumber" }
+        bias: { $ref: "#/components/schemas/NullableNumber" }
+    AccuracySummary:
+      type: object
+      additionalProperties: false
+      required: [resultState, query, metadata, metrics, distribution, days, featured, sensitivity, warnings]
+      properties:
+        resultState: { $ref: "#/components/schemas/ResultState" }
+        query: { $ref: "#/components/schemas/SummaryQuery" }
+        metadata: { $ref: "#/components/schemas/SummaryMetadata" }
+        metrics: { $ref: "#/components/schemas/SummaryMetrics" }
+        distribution: { $ref: "#/components/schemas/Distribution" }
+        days:
+          type: array
+          items: { $ref: "#/components/schemas/DaySummary" }
+        featured:
+          type: array
+          items: { $ref: "#/components/schemas/FeaturedDay" }
+        sensitivity:
+          type: object
+          additionalProperties: false
+          required: [onTheHourOnly]
+          properties:
+            onTheHourOnly: { $ref: "#/components/schemas/SensitivityMetrics" }
+        warnings:
+          type: array
+          items: { $ref: "#/components/schemas/Warning" }
+
+    # ---------- /metadata ----------
+    CutoffPreset:
+      type: object
+      additionalProperties: false
+      required: [id, rule, isDefault]
+      properties:
+        id: { $ref: "#/components/schemas/PresetId" }
+        rule: { $ref: "#/components/schemas/CutoffRule" }
+        isDefault: { type: boolean }
+    DatasetInfo:
+      type: object
+      additionalProperties: false
+      required: [id, role, filter, resolutionMinutes, unit]
+      properties:
+        id: { $ref: "#/components/schemas/Dataset" }
+        role: { $ref: "#/components/schemas/DatasetRole" }
+        filter:
+          anyOf:
+            - type: object
+              additionalProperties: { type: string }
+            - { type: "null" }
+        resolutionMinutes: { type: integer }
+        unit: { $ref: "#/components/schemas/UnitInfo" }
+    Policy:
+      type: object
+      additionalProperties: false
+      required: [id, text]
+      properties:
+        id: { type: string }
+        text: { type: string }
+    MetricDefinition:
+      type: object
+      additionalProperties: false
+      required: [id, formula, description]
+      properties:
+        id: { type: string, enum: [MAE, RMSE, BIAS] }
+        formula: { type: string }
+        description: { type: string }
+    DateWindow:
+      type: object
+      additionalProperties: false
+      required: [from, to]
+      properties:
+        from: { $ref: "#/components/schemas/LocalDate" }
+        to: { $ref: "#/components/schemas/LocalDate" }
+    AppMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        [contractVersion, algorithmVersion, businessTimezone, supportedDeliveryWindow, summaryDefaults, cutoff, datasets, policies, metricDefinitions]
+      properties:
+        contractVersion: { type: string }
+        algorithmVersion: { type: string }
+        businessTimezone: { const: Europe/London }
+        supportedDeliveryWindow: { $ref: "#/components/schemas/DateWindow" }
+        summaryDefaults:
+          type: object
+          additionalProperties: false
+          required: [from, to, rule]
+          properties:
+            from: { $ref: "#/components/schemas/LocalDate" }
+            to: { $ref: "#/components/schemas/LocalDate" }
+            rule: { $ref: "#/components/schemas/CutoffRule" }
+        cutoff:
+          type: object
+          additionalProperties: false
+          required: [defaultRule, range, presets]
+          properties:
+            defaultRule: { $ref: "#/components/schemas/CutoffRule" }
+            range:
+              type: object
+              additionalProperties: false
+              required: [minDayOffset, maxDayOffset, maxLocalTimeAtMaxOffset]
+              properties:
+                minDayOffset: { type: integer }
+                maxDayOffset: { type: integer }
+                maxLocalTimeAtMaxOffset: { $ref: "#/components/schemas/LocalTime" }
+            presets:
+              type: array
+              items: { $ref: "#/components/schemas/CutoffPreset" }
+        datasets:
+          type: array
+          items: { $ref: "#/components/schemas/DatasetInfo" }
+        policies:
+          type: object
+          additionalProperties: false
+          required: [selection, mapping, duplicates, percentiles]
+          properties:
+            selection: { $ref: "#/components/schemas/Policy" }
+            mapping: { $ref: "#/components/schemas/Policy" }
+            duplicates: { $ref: "#/components/schemas/Policy" }
+            percentiles: { $ref: "#/components/schemas/Policy" }
+        metricDefinitions:
+          type: array
+          items: { $ref: "#/components/schemas/MetricDefinition" }
+
+    # ---------- Health ----------
+    Liveness:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status: { const: OK }
+    Readiness:
+      type: object
+      additionalProperties: false
+      required: [status, checks, lastUpstreamSuccessAt]
+      properties:
+        status: { type: string, enum: [READY, NOT_READY] }
+        checks:
+          type: object
+          additionalProperties: false
+          required: [config, upstream]
+          properties:
+            config: { type: string, enum: [OK, INVALID] }
+            upstream: { type: string, enum: [OK, UNKNOWN, DEGRADED] }
+        lastUpstreamSuccessAt:
+          anyOf: [{ $ref: "#/components/schemas/Instant" }, { type: "null" }]
+
+    # ---------- Errors ----------
+    ErrorDetail:
+      type: object
+      additionalProperties: false
+      required: [field, reason, message]
+      properties:
+        field: { type: [string, "null"] }
+        reason:
+          type: string
+          enum:
+            - UNKNOWN_PARAMETER
+            - DUPLICATE_PARAMETER
+            - TOO_LONG
+            - MUTUALLY_EXCLUSIVE
+            - INCOMPLETE_PAIR
+            - MISSING
+            - UNPARSEABLE
+            - OUT_OF_RANGE
+            - FROM_AFTER_TO
+            - TIMEZONE_REQUIRED
+            - FRACTIONAL_SECONDS
+            - DAY_OFFSET_OUT_OF_RANGE
+            - TIME_UNPARSEABLE
+            - BEFORE_RANGE
+            - AFTER_RANGE
+        message: { type: string }
+    ErrorBody:
+      type: object
+      additionalProperties: false
+      required: [code, message, details, requestId, retryable]
+      properties:
+        code: { $ref: "#/components/schemas/ErrorCode" }
+        message: { type: string }
+        details:
+          type: array
+          items: { $ref: "#/components/schemas/ErrorDetail" }
+        requestId: { type: string }
+        retryable: { type: boolean }
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error: { $ref: "#/components/schemas/ErrorBody" }

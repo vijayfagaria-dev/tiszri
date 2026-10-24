@@ -1,0 +1,33 @@
+{
+  "source": "https://data.elexon.co.uk/bmrs/api/v1",
+  "recordedAt": "2026-10-24T17:46:46Z",
+  "recordings": [
+    {
+      "file": "fuelhh_wind.json.gz",
+      "dataset": "FUELHH",
+      "request": {
+        "path": "/datasets/FUELHH/stream",
+        "params": {
+          "settlementDateFrom": "2026-01-01",
+          "settlementDateTo": "2026-02-01",
+          "fuelType": "WIND"
+        }
+      },
+      "rows": 1536,
+      "sha256": "d156607d6cfcaa4b48767fa8dd821867204466002b8bdc8bffddf8848b54e526"
+    },
+    {
+      "file": "windfor.json.gz",
+      "dataset": "WINDFOR",
+      "request": {
+        "path": "/datasets/WINDFOR/stream",
+        "params": {
+          "publishDateTimeFrom": "2025-12-28T00:00:00Z",
+          "publishDateTimeTo": "2026-02-03T00:00:00Z"
+        }
+      },
+      "rows": 21608,
+      "sha256": "46d9884723746576ff44e3de67ebc54138329838c40abb3d3eb1670c0d7a2798"
+    }
+  ]
+}

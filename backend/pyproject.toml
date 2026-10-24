@@ -1,0 +1,55 @@
+[project]
+name = "wind-forecast-api"
+version = "1.0.0"
+description = "Historical decision replay and accuracy analysis for GB national wind forecasts."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.170.9",
+    "jsonschema>=4.26.0",
+    "mypy>=2.4.0",
+    "openapi-spec-validator>=0.9.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pyyaml>=6.0.3",
+    "respx>=0.23.1",
+    "ruff>=0.17.2",
+    "types-pyyaml>=6.0.12.20260906",
+]
+
+[tool.vercel]
+entrypoint = "app.main:app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF", "N", "C4", "PT", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["app"]
+strict = true
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["app.api.*", "app.ports.*", "app.main"]
+disallow_untyped_decorators = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-ra --strict-markers"
+markers = ["req(*ids): SRS requirement identifiers covered by the test"]
