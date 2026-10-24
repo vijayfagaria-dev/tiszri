@@ -32,42 +32,6 @@
 .replay-controls .ghost {
   font-size: 11px;
 }
-.custom-cutoff {
-  position: relative;
-  font-size: 11px;
-}
-.custom-cutoff > summary {
-  padding: 8px;
-  color: #c2d3ef;
-}
-.custom-cutoff form {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  width: 340px;
-  max-width: 85vw;
-  background: #102946;
-  border: 1px solid #6786b1;
-  padding: 18px;
-  border-radius: 12px;
-  z-index: 40;
-  box-shadow: 0 20px 40px #0008;
-}
-.custom-cutoff label {
-  display: block;
-  color: #c2d3ef;
-}
-.custom-cutoff select {
-  display: block;
-  width: 100%;
-  margin: 6px 0 14px;
-  font-size: 12px;
-}
-.custom-cutoff p {
-  color: var(--muted);
-  font-size: 11px;
-  margin-bottom: 12px;
-}
 .replay-heading {
   display: flex;
   flex-wrap: wrap;
@@ -779,7 +743,7 @@
   .inspector {
     grid-column: auto;
   }
-  .replay-controls .preset-label {
+  .replay-controls .decision-picker {
     flex: 1;
     justify-content: flex-end;
   }
@@ -800,14 +764,8 @@
     width: 100%;
     justify-content: space-between;
   }
-  .replay-controls .preset-label {
+  .replay-controls .decision-picker {
     flex-basis: 100%;
-    justify-content: space-between;
-  }
-  .custom-cutoff form {
-    right: auto;
-    left: 0;
-    width: 275px;
   }
   .replay-heading {
     gap: 10px 24px;

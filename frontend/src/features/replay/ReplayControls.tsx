@@ -1,9 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Metadata } from "../../api/schemas";
-import { CopyButton, PresetSelect } from "../../components/ui";
+import { CopyButton, DecisionTimePicker } from "../../components/ui";
 import { shiftDate } from "../../lib/format";
-import { CustomTime } from "./CustomTime";
 
 export function ReplayControls({ metadata }: { metadata: Metadata }) {
   const [p, setP] = useSearchParams();
@@ -58,17 +57,18 @@ export function ReplayControls({ metadata }: { metadata: Metadata }) {
           <ChevronRight size={18} />
         </button>
       </div>
-      <PresetSelect
+      <DecisionTimePicker
         metadata={metadata}
-        value={p.has("cutoff") ? "exact" : (p.get("rule") ?? "d1-0900")}
-        onChange={(value) => {
+        alias={p.get("rule") ?? "d1-0900"}
+        exact={p.get("cutoff") ?? undefined}
+        date={date}
+        onChange={(alias) => {
           const next = new URLSearchParams(p);
-          next.set("rule", value);
+          next.set("rule", alias);
           next.delete("cutoff");
           setP(next);
         }}
       />
-      <CustomTime metadata={metadata} date={date} />
       <CopyButton value={location.href} />
     </section>
   );

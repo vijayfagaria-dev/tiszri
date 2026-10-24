@@ -4,4 +4,4 @@ export { Warnings } from "./Warnings";
 export { ErrorPanel } from "./ErrorPanel";
 export { InfoTip } from "./InfoTip";
 export { Loading } from "./Loading";
-export { PresetSelect } from "./PresetSelect";
+export { DecisionTimePicker } from "./DecisionTimePicker";

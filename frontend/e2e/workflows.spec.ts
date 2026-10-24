@@ -44,9 +44,11 @@ test("partial, empty, all-status and hindsight evidence", async ({ page }) => {
   await page.getByLabel("Demo scenario").selectOption("edge");
   await page.getByRole("button", { name: "All 48", exact: true }).click();
   await expect(page.locator("tbody")).toContainText("Ambiguous forecast");
-  await page.getByLabel("Forecast decision time").selectOption("after-0000");
+  await page.goto("/replay?date=2026-01-16&rule=after-0000");
   await expect(page.getByText("Hindsight view", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Switch to Morning before" }).click();
+  await page
+    .getByRole("button", { name: "Switch to day before, 09:00" })
+    .click();
   await expect(page).toHaveURL(/rule=d1-0900/);
 });
 test("errors are recoverable and malformed responses are not rendered", async ({
@@ -61,8 +63,12 @@ test("a slower prior request cannot replace the new decision", async ({
   page,
 }) => {
   await page.goto("/replay?date=2026-01-16&rule=d1-0900&mockDelay=1400");
-  await expect(page.getByLabel("Forecast decision time")).toBeVisible();
-  await page.getByLabel("Forecast decision time").selectOption("d1-1200");
+  const picker = page.getByRole("combobox", {
+    name: "Decision time",
+    exact: true,
+  });
+  await expect(picker).toBeVisible();
+  await picker.selectOption("d1-1200");
   await expect(page.locator(".replay-heading")).toContainText("12:00 GMT");
   await page.waitForTimeout(1600);
   await expect(page.locator(".replay-heading")).toContainText("12:00 GMT");
@@ -157,20 +163,19 @@ test("keyboard selection, mobile evidence sheet and focus restoration", async ({
 
 test("custom decision time and exact-cutoff URL restore", async ({ page }) => {
   await page.goto("/replay?date=2026-01-15&rule=d1-0900");
-  await page.getByText("Custom time", { exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Decision time", exact: true })
+    .selectOption("custom");
+  await expect(page).toHaveURL(/rule=custom%3A-1%3A09%3A00/);
   await page.getByLabel("Decision day").selectOption("-3");
-  await page.getByLabel("Time (UK)").selectOption("09:00");
-  await page.getByRole("button", { name: "Apply" }).click();
   await expect(page).toHaveURL(/rule=custom%3A-3%3A09%3A00/);
   await expect(page.locator(".replay-heading")).toContainText(
     "Mon 12 Jan at 09:00 GMT",
   );
-  await page.getByText("Custom time", { exact: true }).click();
-  await expect(page.getByLabel("Decision day")).toBeVisible();
-  await page.locator(".app-footer").click();
-  await expect(page.getByLabel("Decision day")).toBeHidden();
   await page.goto("/replay?date=2026-01-16&cutoff=2026-01-15T12%3A00%3A00Z");
   await expect(page.locator(".replay-heading")).toContainText("exact time");
+  await expect(page.getByLabel("Decision day")).toHaveValue("-1");
+  await expect(page.getByLabel("Time (UK)")).toHaveValue("12:00");
 });
 
 test("degraded readiness remains distinguishable from an analysis failure", async ({

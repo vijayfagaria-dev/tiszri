@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import type { DayAnalysis } from "../../api/schemas";
+import { customAlias, londonRule } from "../../app/url";
 import { dayLabel, time } from "../../lib/format";
 
 // Shown instead of the charts and tables when nothing could be compared.
@@ -30,8 +31,11 @@ export function EmptyDay({ data }: { data: DayAnalysis }) {
         <button
           onClick={() => {
             const next = new URLSearchParams(p);
-            next.set("cutoff", first);
-            next.delete("rule");
+            next.set(
+              "rule",
+              customAlias(londonRule(first, data.query.deliveryDate)),
+            );
+            next.delete("cutoff");
             setP(next);
           }}
         >

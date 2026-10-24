@@ -36,7 +36,7 @@ export function Replay({
   };
   const select = (period: number) => update("interval", String(period));
   const backToDefault = {
-    label: "Switch to Morning before · 09:00",
+    label: "Switch to day before, 09:00",
     run: () => {
       const next = new URLSearchParams(p);
       next.set("rule", "d1-0900");

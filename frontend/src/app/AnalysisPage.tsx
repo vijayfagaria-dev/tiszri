@@ -4,7 +4,7 @@ import { RefreshCw } from "lucide-react";
 import type { Metadata } from "../api/schemas";
 import { useAnalysis } from "../api/queries";
 import { apiParams, canonicalParams } from "./url";
-import { Loading, ErrorPanel, PresetSelect } from "../components/ui";
+import { DecisionTimePicker, ErrorPanel, Loading } from "../components/ui";
 import { Overview } from "../features/overview/Overview";
 import { Replay } from "../features/replay/Replay";
 import { ReplayControls } from "../features/replay/ReplayControls";
@@ -42,12 +42,12 @@ export function AnalysisPage({
       {replay && <ReplayControls metadata={metadata} />}
       {!replay && (!result || query.isError) && (
         <div className="recovery-controls">
-          <PresetSelect
+          <DecisionTimePicker
             metadata={metadata}
-            value={canonical.get("rule")!}
-            onChange={(value) => {
+            alias={canonical.get("rule")!}
+            onChange={(alias) => {
               const next = new URLSearchParams(search);
-              next.set("rule", value);
+              next.set("rule", alias);
               setSearch(next);
             }}
           />

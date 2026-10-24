@@ -682,7 +682,7 @@
   .decision-control {
     padding: 6px 8px;
   }
-  .decision-control .preset-label > span {
+  .decision-control .decision-picker label > span {
     display: none;
   }
   .hero-metrics {
@@ -726,7 +726,7 @@
     width: 100%;
     justify-content: space-between;
   }
-  .decision-control .preset-label > span {
+  .decision-control .decision-picker label > span {
     display: block;
   }
   .hero-content {
