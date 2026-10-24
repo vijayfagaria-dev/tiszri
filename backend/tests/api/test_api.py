@@ -26,6 +26,7 @@ async def get(client: httpx.AsyncClient, path: str, **params: str) -> httpx.Resp
     return await client.get(f"/api/v1{path}", params=params)
 
 
+@pytest.mark.req("FR-018", "FR-019", "AC-009")
 async def test_metadata(client: httpx.AsyncClient) -> None:
     response = await get(client, "/metadata")
     body = response.json()
@@ -38,6 +39,7 @@ async def test_metadata(client: httpx.AsyncClient) -> None:
 
 
 class TestWindAnalysis:
+    @pytest.mark.req("FR-008", "AC-002")
     async def test_default_decision_time(self, client: httpx.AsyncClient) -> None:
         response = await get(client, "/wind-analysis", deliveryDate="2026-01-16")
         body = response.json()
@@ -50,6 +52,7 @@ class TestWindAnalysis:
         assert body["metrics"]["mae"] == pytest.approx(800.542, abs=5e-4)
         assert body["highlights"]["versionsUsed"] == ["2026-01-15T07:30:00Z"]
 
+    @pytest.mark.req("FR-013", "FR-020", "FR-021", "AC-009", "AC-011")
     async def test_noon_preset_shows_the_late_forecast(self, client: httpx.AsyncClient) -> None:
         response = await get(
             client,
@@ -93,6 +96,7 @@ class TestWindAnalysis:
         assert body["metrics"]["mae"] == pytest.approx(sum(abs(e) for e in errors) / len(errors))
         assert body["metrics"]["bias"] == pytest.approx(sum(errors) / len(errors))
 
+    @pytest.mark.req("FR-008", "AC-002", "AC-013")
     async def test_explicit_cutoff_with_offset(self, client: httpx.AsyncClient) -> None:
         response = await get(
             client,
@@ -107,7 +111,7 @@ class TestWindAnalysis:
             "2026-01-15T12:00:00+00:00",
         )
 
-    @pytest.mark.req("FR-025")
+    @pytest.mark.req("FR-024", "FR-025", "API-008")
     async def test_partial_day(self, client: httpx.AsyncClient) -> None:
         body = (
             await get(
@@ -193,7 +197,7 @@ async def test_accuracy_summary(client: httpx.AsyncClient) -> None:
     assert body["sensitivity"]["onTheHourOnly"]["n"] == 744
 
 
-@pytest.mark.req("API-002", "FR-004", "AC-001")
+@pytest.mark.req("API-002", "FR-004", "AC-001", "NFR-016")
 @pytest.mark.parametrize(
     ("path", "params", "code", "reason"),
     [
@@ -389,6 +393,7 @@ async def test_forecast_versions(client: httpx.AsyncClient) -> None:
     assert "s-maxage=" in response.headers["Cache-Control"]
 
 
+@pytest.mark.req("FR-013")
 async def test_versions_agree_with_the_replay(client: httpx.AsyncClient) -> None:
     """The forecast a replay selects must be the same value the versions view shows."""
     versions = (await get(client, "/forecast-versions", deliveryDate="2026-01-16")).json()

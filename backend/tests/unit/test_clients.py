@@ -39,6 +39,7 @@ async def fetch(elexon: ElexonClient) -> SourceResult:
 
 
 @respx.mock
+@pytest.mark.req("FR-001", "FR-002")
 async def test_returns_rows_and_sends_the_expected_query() -> None:
     route = respx.get(FUELHH).respond(json=ROWS)
     elexon = client()
@@ -110,6 +111,7 @@ async def test_oversized_response_is_rejected() -> None:
 
 
 @respx.mock
+@pytest.mark.req("FR-003")
 async def test_forecast_window_is_half_open() -> None:
     rows = [
         {"publishTime": "2026-01-12T00:00:00Z"},
@@ -184,6 +186,7 @@ def test_production_refuses_recorded_data() -> None:
         Settings(app_env="production", source_mode="fixtures")
 
 
+@pytest.mark.req("NFR-016")
 def test_only_the_elexon_host_is_allowed() -> None:
     with pytest.raises(ValueError, match="not allowed"):
         Settings(elexon_base_url="https://example.com/api")

@@ -1,0 +1,23 @@
+name: Live Elexon contract
+
+# Daily check that Elexon still returns data in the shape and cadence the service relies on.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.4"
+      - run: uv sync --frozen
+      - run: uv run pytest tests/live -v
+        env:
+          RUN_LIVE_TESTS: "1"

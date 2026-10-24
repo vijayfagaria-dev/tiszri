@@ -3,6 +3,7 @@
 import random
 from datetime import UTC, date, datetime, timedelta, timezone
 
+import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -11,6 +12,8 @@ from app.analysis.replay import analyze_day, choose_forecast, index_actuals, ind
 from app.clients.parsing import parse_time
 from app.models.source import Actual, Forecast
 from tests.support import explicit_cutoff
+
+pytestmark = pytest.mark.req("NFR-001", "FR-009", "FR-010", "AC-003", "AC-004")
 
 BASE = datetime(2026, 1, 13, tzinfo=UTC)
 HOUR = datetime(2026, 1, 16, 21, tzinfo=UTC)

@@ -2,12 +2,14 @@
 BACKEND := cd backend && env -u VIRTUAL_ENV uv run
 URL ?= http://localhost:8000
 
-.PHONY: help setup dev test lint format typecheck ci fixtures record up down latency
+.PHONY: help setup dev test traceability live lint format typecheck ci fixtures record up down latency
 
 help:
 	@echo "setup      install backend dependencies"
 	@echo "dev        run the API locally with live Elexon data (http://localhost:8000)"
 	@echo "test       run the backend test suite"
+	@echo "traceability  run the tests and list which SRS requirements they cover"
+	@echo "live       check the assumptions about the live Elexon API still hold"
 	@echo "lint       check formatting and lint rules"
 	@echo "format     apply formatting and safe lint fixes"
 	@echo "typecheck  run mypy"
@@ -25,6 +27,12 @@ dev:
 
 test:
 	$(BACKEND) pytest
+
+traceability:
+	$(BACKEND) pytest -q --traceability
+
+live:
+	cd backend && RUN_LIVE_TESTS=1 env -u VIRTUAL_ENV uv run pytest tests/live -v
 
 lint:
 	$(BACKEND) ruff check .
