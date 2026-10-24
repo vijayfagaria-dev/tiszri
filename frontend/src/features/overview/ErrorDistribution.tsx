@@ -2,6 +2,7 @@ import { ChartNoAxesCombined } from "lucide-react";
 import type { Summary } from "../../api/schemas";
 import { number } from "../../lib/format";
 export function ErrorDistribution({ data }: { data: Summary }) {
+  if (!data.distribution.absError) return null;
   return (
     <section className="distribution panel">
       <div className="distribution-heading">

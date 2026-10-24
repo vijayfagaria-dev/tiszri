@@ -224,12 +224,17 @@ export const summarySchema = z.object({
     underShare: nullableNumber,
   }),
   distribution: z.object({
-    absError: z.object({
-      p50: nullableNumber,
-      p90: nullableNumber,
-      p95: nullableNumber,
-    }),
-    signedError: z.object({ p10: nullableNumber, p90: nullableNumber }),
+    // both null when nothing could be compared
+    absError: z
+      .object({
+        p50: nullableNumber,
+        p90: nullableNumber,
+        p95: nullableNumber,
+      })
+      .nullable(),
+    signedError: z
+      .object({ p10: nullableNumber, p90: nullableNumber })
+      .nullable(),
     histogram: z.object({
       binWidth: z.literal(500),
       bins: z.array(

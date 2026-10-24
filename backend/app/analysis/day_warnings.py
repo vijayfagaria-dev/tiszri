@@ -67,8 +67,8 @@ def day_warnings(day: DayAnalysis) -> list[AnalysisWarning]:
                 code=WarningCode.NEWER_VERSION_AFTER_CUTOFF,
                 severity="INFO",
                 scope="SOURCE",
-                message=f"A WINDFOR forecast covering this day was published at {published}, "
-                "after the decision time; it was not used.",
+                message=f"A newer forecast was published at {published}, after the decision "
+                "time, so it wasn't used.",
                 data={"publishTime": format_utc(day.newer_after_cutoff)},
             )
         )

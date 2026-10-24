@@ -6,13 +6,6 @@ export const aliases: Record<string, string> = {
   DELIVERY_START_0000: "d0-0000",
   AFTER_DELIVERY_0000: "after-0000",
 };
-export const presetLabels: Record<string, string> = {
-  TWO_DAYS_BEFORE_0900: "2 days before · 09:00",
-  MORNING_BEFORE_0900: "Morning before · 09:00",
-  NOON_BEFORE_1200: "Noon before · 12:00",
-  DELIVERY_START_0000: "Start of delivery · 00:00",
-  AFTER_DELIVERY_0000: "After delivery · 00:00",
-};
 export const ruleAlias = (rule: Rule, metadata: Metadata) =>
   aliases[
     metadata.cutoff.presets.find(
@@ -21,6 +14,40 @@ export const ruleAlias = (rule: Rule, metadata: Metadata) =>
         p.rule.localTime === rule.localTime,
     )?.id ?? ""
   ] ?? `custom:${rule.dayOffset}:${rule.localTime}`;
+// "d1-0900" or "custom:-3:09:00" back to a rule; null if it is neither.
+export function ruleFromAlias(alias: string, metadata: Metadata): Rule | null {
+  const preset = metadata.cutoff.presets.find(
+    (item) => aliases[item.id] === alias,
+  );
+  const custom = /^custom:(-?\d):([0-2]\d:[0-5]\d)$/.exec(alias);
+  return (
+    preset?.rule ??
+    (custom ? { dayOffset: Number(custom[1]), localTime: custom[2] } : null)
+  );
+}
+export const customAlias = (rule: Rule) =>
+  `custom:${rule.dayOffset}:${rule.localTime}`;
+// The London day and time of an instant, as a rule relative to the delivery date.
+export function londonRule(utc: string, date: string): Rule {
+  const part = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/London",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(new Date(utc))
+      .map((p) => [p.type, p.value]),
+  );
+  const day = `${part.year}-${part.month}-${part.day}`;
+  return {
+    dayOffset: Math.round((Date.parse(day) - Date.parse(date)) / 86400000),
+    localTime: `${part.hour}:${part.minute}`,
+  };
+}
 export function canonicalParams(
   search: URLSearchParams,
   replay: boolean,
@@ -70,15 +97,10 @@ export function apiParams(
       );
     result.set("decisionCutoff", value);
   } else {
-    const alias =
-      p.get("rule") ?? ruleAlias(metadata.cutoff.defaultRule, metadata);
-    const preset = metadata.cutoff.presets.find(
-      (item) => aliases[item.id] === alias,
+    const rule = ruleFromAlias(
+      p.get("rule") ?? ruleAlias(metadata.cutoff.defaultRule, metadata),
+      metadata,
     );
-    const custom = /^custom:(-?\d):([0-2]\d:[0-5]\d)$/.exec(alias);
-    const rule =
-      preset?.rule ??
-      (custom ? { dayOffset: Number(custom[1]), localTime: custom[2] } : null);
     if (!rule)
       throw new Error(
         "Unknown decision-time rule. Select a preset to continue.",

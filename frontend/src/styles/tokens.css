@@ -61,6 +61,14 @@ textarea {
   background: #112c4b;
   padding: 8px 12px;
 }
+select {
+  appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9c9ec' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
 button {
   display: inline-flex;
   align-items: center;
@@ -72,7 +80,7 @@ button {
 }
 button:hover:not(:disabled),
 select:hover {
-  background: #1a3c64;
+  background-color: #1a3c64;
   border-color: #6288b9;
 }
 button:disabled {
@@ -207,27 +215,35 @@ td {
   border-color: transparent;
   color: var(--muted);
 }
-.help {
+.info-tip {
   position: relative;
+  display: inline-flex;
 }
-.help summary {
-  list-style: none;
-  display: flex;
-  cursor: pointer;
-  padding: 5px;
+.info-tip > button {
+  padding: 4px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  opacity: 0.75;
 }
-.help p {
+.info-tip > button:hover:not(:disabled) {
+  background: none;
+  opacity: 1;
+}
+.info-tip [role="tooltip"] {
   position: absolute;
   z-index: 20;
+  top: calc(100% + 6px);
+  right: -4px;
   width: 245px;
-  right: 0;
-  top: 32px;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
   border: 1px solid #627da3;
   background: #102b4a;
   color: #e1ecff;
   font-size: 12px;
+  line-height: 1.45;
   box-shadow: var(--shadow);
 }
 details > summary {
@@ -270,20 +286,51 @@ pre {
   background: #15345866;
   border-color: #45638f77;
 }
-.notice summary {
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #f3dcc2;
+  background: #3a2a1a55;
+  border: 1px solid #a3764566;
+  border-left: 3px solid var(--amber);
+  border-radius: 10px;
+  font-size: 12px;
+}
+.callout > svg {
+  color: var(--amber);
+  margin-top: 1px;
+}
+.callout strong {
+  display: block;
+  margin-bottom: 2px;
+  color: #ffd29e;
+  font-weight: 600;
+}
+.note {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 12px;
 }
-.notice p {
-  margin-top: 8px;
+.note svg {
+  color: #7fb2ec;
 }
-.qualification {
-  padding: 12px;
-  color: #ffdbaf;
-  background: #5a3b2433;
-  border-left: 3px solid var(--amber);
-  margin: 12px 0;
+button.link {
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ffc98d;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+button.link:hover:not(:disabled) {
+  background: none;
+  color: #ffe0b9;
 }
 .table-scroll {
   position: relative;

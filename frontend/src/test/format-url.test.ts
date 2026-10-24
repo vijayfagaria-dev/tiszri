@@ -3,6 +3,7 @@ import { metadataSchema, daySchema } from "../api/schemas";
 import { number, percent, time } from "../lib/format";
 import { apiParams, canonicalParams } from "../app/url";
 import { seriesPath } from "../features/replay/chartGeometry";
+import { forecastUsed } from "../features/replay/forecastUsed";
 import { fixture } from "./contract";
 const metadata = metadataSchema.parse(fixture("metadata.json"));
 describe("display formatting and URL state", () => {
@@ -50,5 +51,13 @@ describe("display formatting and URL state", () => {
     );
     expect(path.match(/M/g)).toHaveLength(2);
     expect(path).not.toContain("H2");
+  });
+  it("says which forecast a day used and whether a newer one came too late", () => {
+    const late = daySchema.parse(
+      fixture("analysis_2026-01-16_noon-before.json"),
+    );
+    expect(forecastUsed(late)).toBe(
+      "Used the forecast published Thu 15 Jan at 09:30 GMT, the latest before the decision time. A newer one, published Thu 15 Jan at 12:25 GMT, came too late.",
+    );
   });
 });

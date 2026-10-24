@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { daySchema } from "../api/schemas";
 import { Inspector } from "../features/replay/Inspector";
@@ -51,7 +51,7 @@ describe("evidence presentation", () => {
         warnings={[
           {
             code: "FUTURE_CODE",
-            severity: "INFO",
+            severity: "WARNING",
             scope: "ANALYSIS",
             message: "New server detail",
             affectedCount: 0,
@@ -61,7 +61,28 @@ describe("evidence presentation", () => {
         ]}
       />,
     );
-    fireEvent.click(screen.getByText("Other"));
+    expect(screen.getByText("Other")).toBeVisible();
     expect(screen.getByText("New server detail")).toBeVisible();
+  });
+  it("shows information as a single line without a title", () => {
+    render(
+      <Warnings
+        warnings={[
+          {
+            code: "NEWER_VERSION_AFTER_CUTOFF",
+            severity: "INFO",
+            scope: "SOURCE",
+            message: "A newer forecast was not used.",
+            affectedCount: 0,
+            affectedIntervals: [],
+            data: null,
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByText("A newer forecast was not used.")).toBeVisible();
+    expect(
+      screen.queryByText(warningLabels.NEWER_VERSION_AFTER_CUTOFF),
+    ).toBeNull();
   });
 });

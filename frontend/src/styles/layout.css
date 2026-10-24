@@ -120,9 +120,10 @@
   color: #acbdd6;
 }
 .demo-banner select {
-  padding: 3px 22px 3px 8px;
+  padding: 3px 28px 3px 8px;
   font-size: 10px;
-  background: #0c2039;
+  background-color: #0c2039;
+  background-size: 10px;
 }
 .result-tools {
   display: flex;
@@ -236,48 +237,24 @@
   justify-content: center;
   margin-top: 18px;
 }
-.receipts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 22px;
-  align-items: start;
-}
-.receipts > details > summary {
+.decision-picker {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 15px 18px;
-  font-size: 12px;
-}
-.receipts > details > summary::after {
-  content: "+";
-  margin-left: auto;
-  color: #a9c9ec;
-}
-.receipts > details[open] > summary::after {
-  content: "−";
-}
-.source-receipt {
-  padding: 15px 0;
-  border-top: 1px solid #37577988;
-}
-.receipts .disclosure-body {
-  max-height: 600px;
-  overflow: auto;
-}
-.preset-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
   color: #cadaf3;
   font-size: 11px;
 }
-.preset-label select {
+.decision-picker label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.decision-picker select {
   border-radius: 20px;
-  padding: 9px 30px 9px 15px;
+  padding: 9px 34px 9px 15px;
   color: #eef5ff;
-  background: #18385f;
+  background-color: #18385f;
   border: 1px solid #38578588;
   font-size: 12px;
 }
@@ -346,9 +323,6 @@
     gap: 2px;
     align-items: flex-end;
   }
-  .receipts {
-    grid-template-columns: 1fr;
-  }
   .app-footer {
     flex-wrap: wrap;
   }
@@ -359,17 +333,17 @@
     font-size: 9px;
     justify-content: space-between;
   }
-  .preset-label {
+  .decision-picker label {
     flex-wrap: wrap;
     gap: 5px;
   }
-  .preset-label select {
+  .decision-picker select {
     max-width: 100%;
   }
   .skeleton-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .help p {
+  .info-tip [role="tooltip"] {
     width: 210px;
   }
 }

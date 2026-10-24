@@ -12,16 +12,10 @@ import {
 } from "lucide-react";
 import type { Metadata, Summary } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
-import {
-  MetricsGrid,
-  PresetSelect,
-  Qualification,
-  Warnings,
-} from "../../components/ui";
+import { DecisionTimePicker, MetricsGrid, Warnings } from "../../components/ui";
 import { WindArt } from "../../components/WindArt";
-import { dateLabel, percent } from "../../lib/format";
+import { dateLabel, mw, percent } from "../../lib/format";
 import { replayLink } from "../../app/url";
-import { Receipts } from "../receipts/Receipts";
 export function Overview({
   result,
   metadata,
@@ -33,6 +27,8 @@ export function Overview({
   const [search, setSearch] = useSearchParams();
   const over = (data.metrics.overShare ?? 0) >= (data.metrics.underShare ?? 0);
   const share = over ? data.metrics.overShare : data.metrics.underShare;
+  // 90th percentile of forecast − actual: how far wind fell short of the forecast
+  const shortfall = data.distribution.signedError?.p90 ?? null;
   const change = (key: string, value: string) => {
     const next = new URLSearchParams(search);
     next.set(key, value);
@@ -48,20 +44,11 @@ export function Overview({
             JANUARY, DECODED.
           </p>
           <div className="decision-control">
-            <PresetSelect
+            <DecisionTimePicker
               metadata={metadata}
-              value={search.get("rule") ?? "d1-0900"}
-              onChange={(v) => change("rule", v)}
+              alias={search.get("rule") ?? "d1-0900"}
+              onChange={(alias) => change("rule", alias)}
             />
-            <details className="help">
-              <summary aria-label="About the decision time">
-                <Info size={16} />
-              </summary>
-              <p>
-                Only forecasts published at or before this time are eligible.
-                09:00 is an editable default, not a market rule.
-              </p>
-            </details>
           </div>
         </div>
         <div className="hero-content">
@@ -125,6 +112,19 @@ export function Overview({
                 {data.metrics.directionCounts.exact} exact half-hours
               </small>
             )}
+            {shortfall != null && (
+              <p className="planning">
+                <strong>For planning:</strong>{" "}
+                {shortfall > 0 ? (
+                  <>
+                    in 9 of 10 half-hours, actual wind was no more than{" "}
+                    <b>{mw(shortfall)}</b> below the forecast.
+                  </>
+                ) : (
+                  "in 9 of 10 half-hours, actual wind was at least as high as the forecast."
+                )}
+              </p>
+            )}
           </article>
           <div className="hero-metrics">
             <MetricsGrid
@@ -166,7 +166,6 @@ export function Overview({
           </aside>
         </div>
       </section>
-      <Qualification data={data} />
       <Warnings warnings={data.warnings} />
       <DailyPerformance
         data={data}
@@ -176,7 +175,6 @@ export function Overview({
       />
       <FeaturedReplays data={data} metadata={metadata} search={search} />
       <ErrorDistribution data={data} />
-      <Receipts result={result} metadata={metadata} />
       <div className="overview-footnote">
         <span>
           Decisions made in January 2026 · Inclusive delivery window shown above

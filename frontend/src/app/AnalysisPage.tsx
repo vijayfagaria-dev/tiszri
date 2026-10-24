@@ -4,7 +4,7 @@ import { RefreshCw } from "lucide-react";
 import type { Metadata } from "../api/schemas";
 import { useAnalysis } from "../api/queries";
 import { apiParams, canonicalParams } from "./url";
-import { Loading, ErrorPanel, PresetSelect } from "../components/ui";
+import { DecisionTimePicker, ErrorPanel, Loading } from "../components/ui";
 import { Overview } from "../features/overview/Overview";
 import { Replay } from "../features/replay/Replay";
 import { ReplayControls } from "../features/replay/ReplayControls";
@@ -42,12 +42,12 @@ export function AnalysisPage({
       {replay && <ReplayControls metadata={metadata} />}
       {!replay && (!result || query.isError) && (
         <div className="recovery-controls">
-          <PresetSelect
+          <DecisionTimePicker
             metadata={metadata}
-            value={canonical.get("rule")!}
-            onChange={(value) => {
+            alias={canonical.get("rule")!}
+            onChange={(alias) => {
               const next = new URLSearchParams(search);
-              next.set("rule", value);
+              next.set("rule", alias);
               setSearch(next);
             }}
           />
@@ -76,27 +76,32 @@ export function AnalysisPage({
                 : `${dateLabel(result.response.query.from)}–${dateLabel(result.response.query.to, true)}; decision rule ${result.response.query.rule.dayOffset} calendar days relative to delivery at ${result.response.query.rule.localTime} Europe/London.`}
             </p>
           )}
-          <div className="result-tools">
-            <span role="status">
-              {query.isFetching
-                ? "Refreshing the current analysis…"
-                : `${result.response.resultState.toLowerCase()} evidence · ${result.response.metadata.counts.matched} matched half-hours`}
-            </span>
-            <button
-              className="ghost"
-              onClick={() => {
-                void query.refetch();
-              }}
-              disabled={query.isFetching}
-            >
-              <RefreshCw size={13} />
-              Refresh
-            </button>
-          </div>
+          {!replay && (
+            <div className="result-tools">
+              <span role="status">
+                {query.isFetching
+                  ? "Refreshing the current analysis…"
+                  : `${result.response.resultState.toLowerCase()} evidence · ${result.response.metadata.counts.matched} matched half-hours`}
+              </span>
+              <button
+                className="ghost"
+                onClick={() => {
+                  void query.refetch();
+                }}
+                disabled={query.isFetching}
+              >
+                <RefreshCw size={13} />
+                Refresh
+              </button>
+            </div>
+          )}
           {"intervals" in result.response ? (
             <Replay
               result={{ ...result, response: result.response }}
-              metadata={metadata}
+              refreshing={query.isFetching}
+              onRefresh={() => {
+                void query.refetch();
+              }}
             />
           ) : (
             <Overview

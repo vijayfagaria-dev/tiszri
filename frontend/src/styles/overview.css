@@ -133,6 +133,19 @@
 .direction-labels > span:last-child b {
   color: var(--cyan);
 }
+.planning {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  background: #3a2a1a40;
+  color: #f3dcc2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.planning b {
+  color: #ffd29e;
+}
 .hero-metrics {
   padding-bottom: 14px;
 }
@@ -212,7 +225,7 @@
   width: 37px;
   height: 37px;
 }
-.metric .help {
+.metric .info-tip {
   color: #b3c9e9;
 }
 .glance {
@@ -682,7 +695,7 @@
   .decision-control {
     padding: 6px 8px;
   }
-  .decision-control .preset-label > span {
+  .decision-control .decision-picker label > span {
     display: none;
   }
   .hero-metrics {
@@ -726,7 +739,7 @@
     width: 100%;
     justify-content: space-between;
   }
-  .decision-control .preset-label > span {
+  .decision-control .decision-picker label > span {
     display: block;
   }
   .hero-content {

@@ -29,6 +29,13 @@ export function ForecastChart({
   const x = (i: number) => 50 + (i / (intervals.length - 1)) * 910;
   const y = (v: number) => 235 - (v / ceiling) * 200;
   const selectedX = x(selected.settlementPeriod - 1);
+  // The plot runs from 5% to 96% of the chart's width. Inset the strips below
+  // so each cell is centred under its point (cells are 2px apart).
+  const step = 91 / (intervals.length - 1);
+  const underPlot = {
+    paddingLeft: `calc(${5 - step / 2}% + 1px)`,
+    paddingRight: `calc(${4 - step / 2}% + 1px)`,
+  };
   return (
     <section className="chart-panel panel">
       <div className="chart-header">
@@ -192,46 +199,34 @@ export function ForecastChart({
           evidence only
         </span>
       </div>
-      <div
-        className="vintage-ribbon"
-        role="group"
-        aria-label="Selected vintages by interval; scroll for more"
-      >
+      <div className="vintage-ribbon" style={underPlot} aria-hidden="true">
         {intervals.map((i) => (
-          <button
+          <span
             key={i.settlementPeriod}
             onClick={() => select(i.settlementPeriod)}
             className={`${i.status !== "MATCHED" ? "excluded" : ""} ${i.settlementPeriod === active ? "active" : ""}`}
-            aria-pressed={i.settlementPeriod === active}
-            aria-label={`Select interval ${i.settlementPeriod}, vintage ${i.forecast ? time(i.forecast.publishTime) : "unavailable"}`}
             title={`SP ${i.settlementPeriod} · ${i.forecast ? time(i.forecast.publishTime) : statusLabels[i.status]}`}
-          >
-            <span className="sr-only">{i.settlementPeriod}</span>
-          </button>
+          />
         ))}
       </div>
       <div className="ribbon-heading">
         <h3>Error fingerprint</h3>
         <span>↑ too high · ↓ too low · hatched = excluded</span>
       </div>
-      <div
-        className="error-fingerprint"
-        role="group"
-        aria-label="Signed errors by interval; scroll for more"
-      >
+      <div className="error-fingerprint" style={underPlot} aria-hidden="true">
         {intervals.map((i) => (
-          <button
+          <span
             key={i.settlementPeriod}
             className={`${i.settlementPeriod === active ? "active " : ""}${i.error ? i.error.direction.toLowerCase() : "excluded"}`}
             onClick={() => select(i.settlementPeriod)}
-            aria-label={`Error interval ${i.settlementPeriod}: ${mw(i.error?.signed, true)}`}
+            title={`SP ${i.settlementPeriod} · ${mw(i.error?.signed, true)}`}
           >
-            <span
+            <i
               style={{
                 height: `${i.error ? Math.max(3, Math.min(48, i.error.absolute / 150)) : 22}px`,
               }}
             />
-          </button>
+          </span>
         ))}
       </div>
     </section>

@@ -4,6 +4,9 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /How far/ })).toBeVisible();
   await expect(page).toHaveURL(/rule=d1-0900/);
+  await expect(page.locator(".planning")).toContainText(
+    "no more than 4,145 MW below the forecast",
+  );
   await page.getByRole("button", { name: "Ranked", exact: true }).click();
   await expect(page.getByText("Highest MAE first")).toBeVisible();
   await page.getByRole("link", { name: /Worst day/ }).click();
@@ -11,7 +14,7 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
     page.getByRole("heading", { name: "Forecast vs actual" }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Select interval 24, vintage", exact: false })
+    .getByRole("button", { name: "Inspect interval 24", exact: true })
     .click();
   await expect(page).toHaveURL(/interval=24/);
   await expect(page.locator("#interval-inspector")).toContainText(
@@ -27,25 +30,28 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
 });
 test("partial, empty, all-status and hindsight evidence", async ({ page }) => {
   await page.goto("/replay?date=2026-01-15&rule=d2-0900");
-  await expect(page.getByText(/Partial evidence —/)).toBeVisible();
+  await expect(page.locator(".callout")).toContainText("Partial coverage");
   await page
     .getByRole("button", { name: "Not published 4", exact: true })
     .click();
   await expect(page.locator("tbody tr")).toHaveCount(4);
   await page.goto("/replay?date=2026-01-15&rule=custom:-3:09:00");
   await expect(
-    page.getByRole("heading", {
-      name: "No matched evidence at this decision time",
-    }),
+    page.getByRole("heading", { name: "No forecast had been published yet" }),
   ).toBeVisible();
-  await expect(page.locator(".metric-value").first()).toHaveText("Unavailable");
+  await expect(page.locator(".empty-panel")).toContainText(
+    "The first one was published on Tue 13 Jan at 02:30 GMT.",
+  );
+  await expect(page.locator(".callout")).toHaveCount(0);
   await page.goto("/replay?date=2026-01-16&rule=d1-0900");
   await page.getByLabel("Demo scenario").selectOption("edge");
   await page.getByRole("button", { name: "All 48", exact: true }).click();
   await expect(page.locator("tbody")).toContainText("Ambiguous forecast");
-  await page.getByLabel("Forecast decision time").selectOption("after-0000");
+  await page.goto("/replay?date=2026-01-16&rule=after-0000");
   await expect(page.getByText("Hindsight view", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Switch to Morning before" }).click();
+  await page
+    .getByRole("button", { name: "Switch to day before, 09:00" })
+    .click();
   await expect(page).toHaveURL(/rule=d1-0900/);
 });
 test("errors are recoverable and malformed responses are not rendered", async ({
@@ -60,8 +66,12 @@ test("a slower prior request cannot replace the new decision", async ({
   page,
 }) => {
   await page.goto("/replay?date=2026-01-16&rule=d1-0900&mockDelay=1400");
-  await expect(page.getByLabel("Forecast decision time")).toBeVisible();
-  await page.getByLabel("Forecast decision time").selectOption("d1-1200");
+  const picker = page.getByRole("combobox", {
+    name: "Decision time",
+    exact: true,
+  });
+  await expect(picker).toBeVisible();
+  await picker.selectOption("d1-1200");
   await expect(page.locator(".replay-heading")).toContainText("12:00 GMT");
   await page.waitForTimeout(1600);
   await expect(page.locator(".replay-heading")).toContainText("12:00 GMT");
@@ -154,38 +164,24 @@ test("keyboard selection, mobile evidence sheet and focus restoration", async ({
   await expect(trigger).toBeFocused();
 });
 
-test("custom cutoff validation and exact-cutoff URL restore", async ({
-  page,
-}) => {
-  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
-  await page.getByText("Custom cutoff", { exact: true }).click();
-  await page.getByLabel("Exact decision time (UTC)").fill("not-a-date");
-  await page.getByRole("button", { name: "Apply cutoff" }).click();
-  await expect(page.getByRole("alert")).toContainText("valid UTC instant");
+test("custom decision time and exact-cutoff URL restore", async ({ page }) => {
+  await page.goto("/replay?date=2026-01-15&rule=d1-0900");
   await page
-    .getByLabel("Exact decision time (UTC)")
-    .fill("2026-01-15T12:00:00Z");
-  await page.getByRole("button", { name: "Apply cutoff" }).click();
-  await expect(page).toHaveURL(/cutoff=2026-01-15T12/);
-  await expect(page.locator(".replay-heading")).toContainText("explicit");
-  await page.reload();
-  await expect(page.locator(".replay-heading")).toContainText("explicit");
-});
-
-test("copy receipt keeps response and HTTP evidence separate", async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
-  await page.getByText("Result receipt & provenance", { exact: true }).click();
-  await page.getByRole("button", { name: "Copy diagnostic receipt" }).click();
-  await expect(page.getByText("Copied", { exact: true })).toBeVisible();
-  const receipt = JSON.parse(
-    await page.evaluate(() => navigator.clipboard.readText()),
+    .getByRole("combobox", { name: "Decision time", exact: true })
+    .selectOption("custom");
+  await expect(page).toHaveURL(/rule=custom%3A-1%3A09%3A00/);
+  await page.getByLabel("Decision day").selectOption("-3");
+  await expect(page).toHaveURL(/rule=custom%3A-3%3A09%3A00/);
+  await expect(page.locator(".replay-heading")).toContainText(
+    "Mon 12 Jan at 09:00 GMT",
   );
-  expect(receipt.response.query.deliveryDate).toBe("2026-01-16");
-  expect(receipt.httpHeaders["Server-Timing"]).toContain("total;dur=");
+  await page.goto("/replay?date=2026-01-16&cutoff=2026-01-15T12%3A00%3A00Z");
+  await expect(page.locator(".replay-heading")).toContainText("exact time");
+  await expect(page.locator(".forecast-used")).toContainText(
+    "published Thu 15 Jan at 09:30 GMT",
+  );
+  await expect(page.getByLabel("Decision day")).toHaveValue("-1");
+  await expect(page.getByLabel("Time (UK)")).toHaveValue("12:00");
 });
 
 test("degraded readiness remains distinguishable from an analysis failure", async ({
@@ -194,4 +190,24 @@ test("degraded readiness remains distinguishable from an analysis failure", asyn
   await page.goto("/?mockHealth=DEGRADED");
   await expect(page.locator(".health")).toContainText("Degraded");
   await expect(page.getByRole("heading", { name: /How far/ })).toBeVisible();
+});
+
+test("info tips show on hover or focus and close on leave, outside click or Escape", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const info = page.getByRole("button", { name: "About Typical miss" });
+  const tip = page.getByRole("tooltip");
+  await info.hover();
+  await expect(tip).toBeVisible();
+  await page.mouse.move(0, 0);
+  await expect(tip).toBeHidden();
+  await info.focus();
+  await expect(tip).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(tip).toBeHidden();
+  await info.click();
+  await expect(tip).toBeVisible();
+  await page.locator(".app-footer").click();
+  await expect(tip).toBeHidden();
 });

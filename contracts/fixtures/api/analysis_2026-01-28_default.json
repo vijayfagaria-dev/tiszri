@@ -100,7 +100,7 @@
       }
     },
     "coverage": 1.0,
-    "resultHash": "sha256:c5a4c71fa3df8bf7b74c9cbbdf9b91b8e1c117eedf07bd8b0cc61ca2793fbb0d"
+    "resultHash": "sha256:cb590077176f5ac0f2aca553d4d907e150b6210f8d8acd769aa6c8ff46a5f360"
   },
   "metrics": {
     "n": 48,
@@ -1668,7 +1668,7 @@
       "code": "NEWER_VERSION_AFTER_CUTOFF",
       "severity": "INFO",
       "scope": "SOURCE",
-      "message": "A WINDFOR forecast covering this day was published at 09:30 GMT on 27 Jan, after the decision time; it was not used.",
+      "message": "A newer forecast was published at 09:30 GMT on 27 Jan, after the decision time, so it wasn't used.",
       "affectedCount": 0,
       "affectedIntervals": [],
       "data": {

@@ -1,15 +1,31 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+} from "lucide-react";
+import { apiUrl } from "../../api/client";
 import type { Metadata } from "../../api/schemas";
-import { CopyButton, PresetSelect } from "../../components/ui";
+import { CopyButton, DecisionTimePicker } from "../../components/ui";
+import { apiParams, canonicalParams } from "../../app/url";
 import { shiftDate } from "../../lib/format";
 
 export function ReplayControls({ metadata }: { metadata: Metadata }) {
   const [p, setP] = useSearchParams();
   const date = p.get("date") ?? "2026-01-16";
-  const [custom, setCustom] = useState("");
-  const [error, setError] = useState("");
+  let csv: string | null = null;
+  if (import.meta.env.VITE_API_MODE !== "mock")
+    try {
+      const params = apiParams(
+        canonicalParams(p, true, metadata),
+        true,
+        metadata,
+      );
+      csv = apiUrl("wind-analysis/export", params);
+    } catch {
+      // an invalid rule in the URL; the page shows the error instead
+    }
   const changeDate = (nextDate: string) => {
     const next = new URLSearchParams(p);
     next.set("date", nextDate);
@@ -60,63 +76,24 @@ export function ReplayControls({ metadata }: { metadata: Metadata }) {
           <ChevronRight size={18} />
         </button>
       </div>
-      <PresetSelect
+      <DecisionTimePicker
         metadata={metadata}
-        value={p.has("cutoff") ? "exact" : (p.get("rule") ?? "d1-0900")}
-        onChange={(value) => {
+        alias={p.get("rule") ?? "d1-0900"}
+        exact={p.get("cutoff") ?? undefined}
+        date={date}
+        onChange={(alias) => {
           const next = new URLSearchParams(p);
-          next.set("rule", value);
+          next.set("rule", alias);
           next.delete("cutoff");
           setP(next);
         }}
       />
-      <details className="custom-cutoff">
-        <summary>Custom cutoff</summary>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (
-              !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(custom) ||
-              !Number.isFinite(Date.parse(custom))
-            ) {
-              setError(
-                "Enter a valid UTC instant with seconds, for example 2026-01-15T09:00:00Z.",
-              );
-              return;
-            }
-            const min = Date.parse(`${shiftDate(date, -7)}T00:00:00Z`);
-            const max = Date.parse(`${shiftDate(date, 2)}T00:00:00Z`);
-            if (Date.parse(custom) < min || Date.parse(custom) > max) {
-              setError(
-                "Cutoff must lie between 7 days before and 2 days after delivery at 00:00 London.",
-              );
-              return;
-            }
-            const next = new URLSearchParams(p);
-            next.set("cutoff", custom);
-            next.delete("rule");
-            setError("");
-            setP(next);
-          }}
-        >
-          <label>
-            Exact decision time (UTC)
-            <input
-              placeholder="2026-01-15T09:00:00Z"
-              value={custom}
-              onChange={(e) => setCustom(e.target.value)}
-              aria-invalid={!!error}
-            />
-          </label>
-          <p>
-            UTC input is unambiguous. Applied London time appears with the
-            result. Day navigation shifts this instant by the same number of
-            days within the January window.
-          </p>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit">Apply cutoff</button>
-        </form>
-      </details>
+      {csv && (
+        <a className="ghost download" href={csv} download>
+          <Download size={14} />
+          Download CSV
+        </a>
+      )}
       <CopyButton value={location.href} />
     </section>
   );

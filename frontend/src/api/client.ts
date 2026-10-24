@@ -19,6 +19,8 @@ export class ApiError extends Error {
     this.details = error.details;
   }
 }
+export const apiUrl = (path: string, params?: URLSearchParams) =>
+  `${(import.meta.env.VITE_API_BASE_URL || "/api/v1").replace(/\/$/, "")}/${path}${params?.size ? `?${params}` : ""}`;
 export function retryAfterMs(value: string | null) {
   if (!value) return 0;
   return /^\d+$/.test(value)
@@ -33,20 +35,13 @@ export async function request<T>(
   guard?: (data: T) => boolean,
   acceptedStatuses: number[] = [],
 ): Promise<ApiResult<T>> {
-  const base = (import.meta.env.VITE_API_BASE_URL || "/api/v1").replace(
-    /\/$/,
-    "",
-  );
-  const response = await fetch(
-    `${base}/${path}${params?.size ? `?${params}` : ""}`,
-    {
-      signal,
-      headers: {
-        Accept: "application/json",
-        "X-Request-ID": crypto.randomUUID(),
-      },
+  const response = await fetch(apiUrl(path, params), {
+    signal,
+    headers: {
+      Accept: "application/json",
+      "X-Request-ID": crypto.randomUUID(),
     },
-  );
+  });
   const httpHeaders = Object.fromEntries(
     ["X-Request-ID", "Server-Timing", "Cache-Control", "Retry-After"].map(
       (key) => [key, response.headers.get(key)],
