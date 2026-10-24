@@ -236,36 +236,6 @@
   justify-content: center;
   margin-top: 18px;
 }
-.receipts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 22px;
-  align-items: start;
-}
-.receipts > details > summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 15px 18px;
-  font-size: 12px;
-}
-.receipts > details > summary::after {
-  content: "+";
-  margin-left: auto;
-  color: #a9c9ec;
-}
-.receipts > details[open] > summary::after {
-  content: "−";
-}
-.source-receipt {
-  padding: 15px 0;
-  border-top: 1px solid #37577988;
-}
-.receipts .disclosure-body {
-  max-height: 600px;
-  overflow: auto;
-}
 .preset-label {
   display: flex;
   align-items: center;
@@ -345,9 +315,6 @@
     flex-direction: column;
     gap: 2px;
     align-items: flex-end;
-  }
-  .receipts {
-    grid-template-columns: 1fr;
   }
   .app-footer {
     flex-wrap: wrap;

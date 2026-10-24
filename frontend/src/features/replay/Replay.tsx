@@ -2,21 +2,14 @@ import { QuickSummary } from "./QuickSummary";
 import { IntervalLedger } from "./IntervalLedger";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { DayAnalysis, Metadata } from "../../api/schemas";
+import type { DayAnalysis } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import { Qualification, Warnings } from "../../components/ui";
 import { dateLabel, stamp } from "../../lib/format";
 import { statusLabels } from "../../lib/status";
 import { ForecastChart } from "./ForecastChart";
 import { ResponsiveInspector } from "./ResponsiveInspector";
-import { Receipts } from "../receipts/Receipts";
-export function Replay({
-  result,
-  metadata,
-}: {
-  result: ApiResult<DayAnalysis>;
-  metadata: Metadata;
-}) {
+export function Replay({ result }: { result: ApiResult<DayAnalysis> }) {
   const data = result.response;
   const [p, setP] = useSearchParams();
   const active = Math.min(
@@ -121,7 +114,6 @@ export function Replay({
         Selected interval {active},{" "}
         {interval ? statusLabels[interval.status] : ""}. Filter: {filter}.
       </p>
-      <Receipts result={result} metadata={metadata} />
     </>
   );
 }

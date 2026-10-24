@@ -21,7 +21,6 @@ import {
 import { WindArt } from "../../components/WindArt";
 import { dateLabel, percent } from "../../lib/format";
 import { replayLink } from "../../app/url";
-import { Receipts } from "../receipts/Receipts";
 export function Overview({
   result,
   metadata,
@@ -176,7 +175,6 @@ export function Overview({
       />
       <FeaturedReplays data={data} metadata={metadata} search={search} />
       <ErrorDistribution data={data} />
-      <Receipts result={result} metadata={metadata} />
       <div className="overview-footnote">
         <span>
           Decisions made in January 2026 · Inclusive delivery window shown above

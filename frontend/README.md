@@ -38,7 +38,7 @@ src/
   app/          routing, shell, error boundary, URL state
   api/          HTTP client, runtime response schemas (Zod), queries
   components/   small shared UI pieces
-  features/     overview, replay and receipts screens
+  features/     overview and replay screens
   hooks/        browser online status
   lib/          number and time formatting, display labels
   mocks/        MSW handlers serving ../contracts/fixtures/api

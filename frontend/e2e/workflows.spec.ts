@@ -172,22 +172,6 @@ test("custom cutoff validation and exact-cutoff URL restore", async ({
   await expect(page.locator(".replay-heading")).toContainText("explicit");
 });
 
-test("copy receipt keeps response and HTTP evidence separate", async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
-  await page.getByText("Result receipt & provenance", { exact: true }).click();
-  await page.getByRole("button", { name: "Copy diagnostic receipt" }).click();
-  await expect(page.getByText("Copied", { exact: true })).toBeVisible();
-  const receipt = JSON.parse(
-    await page.evaluate(() => navigator.clipboard.readText()),
-  );
-  expect(receipt.response.query.deliveryDate).toBe("2026-01-16");
-  expect(receipt.httpHeaders["Server-Timing"]).toContain("total;dur=");
-});
-
 test("degraded readiness remains distinguishable from an analysis failure", async ({
   page,
 }) => {

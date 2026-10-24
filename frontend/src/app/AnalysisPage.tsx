@@ -94,10 +94,7 @@ export function AnalysisPage({
             </button>
           </div>
           {"intervals" in result.response ? (
-            <Replay
-              result={{ ...result, response: result.response }}
-              metadata={metadata}
-            />
+            <Replay result={{ ...result, response: result.response }} />
           ) : (
             <Overview
               result={{ ...result, response: result.response }}
