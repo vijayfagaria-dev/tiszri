@@ -7,6 +7,7 @@ import type { DayAnalysis } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import { Warnings } from "../../components/ui";
 import { dayLabel, time } from "../../lib/format";
+import { forecastUsed } from "./forecastUsed";
 import { statusLabels } from "../../lib/status";
 import { ForecastChart } from "./ForecastChart";
 import { ResponsiveInspector } from "./ResponsiveInspector";
@@ -78,6 +79,9 @@ export function Replay({
         >
           <RefreshCw size={14} />
         </button>
+        {data.highlights.versionsUsed.length > 0 && (
+          <p className="forecast-used">{forecastUsed(data)}</p>
+        )}
       </section>
       <Warnings
         warnings={visibleWarnings(data)}
@@ -122,10 +126,10 @@ export function Replay({
 function visibleWarnings(data: DayAnalysis) {
   const codes = data.warnings.map((w) => w.code);
   const hidden = [
-    // the empty-day panel explains these
-    ...(data.resultState === "EMPTY"
-      ? ["NO_MATCHED_INTERVALS", "NEWER_VERSION_AFTER_CUTOFF"]
-      : []),
+    // the header says which forecast was used and whether a newer one came too late
+    "NEWER_VERSION_AFTER_CUTOFF",
+    // the empty-day panel explains this
+    ...(data.resultState === "EMPTY" ? ["NO_MATCHED_INTERVALS"] : []),
     // implied by a decision made during or after delivery
     ...(codes.includes("HINDSIGHT_CUTOFF") ||
     codes.includes("CUTOFF_INSIDE_DELIVERY_DAY")

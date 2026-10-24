@@ -14,7 +14,7 @@ import type { Metadata, Summary } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import { DecisionTimePicker, MetricsGrid, Warnings } from "../../components/ui";
 import { WindArt } from "../../components/WindArt";
-import { dateLabel, percent } from "../../lib/format";
+import { dateLabel, mw, percent } from "../../lib/format";
 import { replayLink } from "../../app/url";
 export function Overview({
   result,
@@ -27,6 +27,8 @@ export function Overview({
   const [search, setSearch] = useSearchParams();
   const over = (data.metrics.overShare ?? 0) >= (data.metrics.underShare ?? 0);
   const share = over ? data.metrics.overShare : data.metrics.underShare;
+  // 90th percentile of forecast − actual: how far wind fell short of the forecast
+  const shortfall = data.distribution.signedError?.p90 ?? null;
   const change = (key: string, value: string) => {
     const next = new URLSearchParams(search);
     next.set(key, value);
@@ -109,6 +111,19 @@ export function Overview({
               <small>
                 {data.metrics.directionCounts.exact} exact half-hours
               </small>
+            )}
+            {shortfall != null && (
+              <p className="planning">
+                <strong>For planning:</strong>{" "}
+                {shortfall > 0 ? (
+                  <>
+                    in 9 of 10 half-hours, actual wind was no more than{" "}
+                    <b>{mw(shortfall)}</b> below the forecast.
+                  </>
+                ) : (
+                  "in 9 of 10 half-hours, actual wind was at least as high as the forecast."
+                )}
+              </p>
             )}
           </article>
           <div className="hero-metrics">

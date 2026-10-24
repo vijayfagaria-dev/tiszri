@@ -4,6 +4,9 @@ test("overview to replay, selection, filters and history", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /How far/ })).toBeVisible();
   await expect(page).toHaveURL(/rule=d1-0900/);
+  await expect(page.locator(".planning")).toContainText(
+    "no more than 4,145 MW below the forecast",
+  );
   await page.getByRole("button", { name: "Ranked", exact: true }).click();
   await expect(page.getByText("Highest MAE first")).toBeVisible();
   await page.getByRole("link", { name: /Worst day/ }).click();
@@ -174,6 +177,9 @@ test("custom decision time and exact-cutoff URL restore", async ({ page }) => {
   );
   await page.goto("/replay?date=2026-01-16&cutoff=2026-01-15T12%3A00%3A00Z");
   await expect(page.locator(".replay-heading")).toContainText("exact time");
+  await expect(page.locator(".forecast-used")).toContainText(
+    "published Thu 15 Jan at 09:30 GMT",
+  );
   await expect(page.getByLabel("Decision day")).toHaveValue("-1");
   await expect(page.getByLabel("Time (UK)")).toHaveValue("12:00");
 });

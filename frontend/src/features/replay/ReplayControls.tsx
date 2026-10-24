@@ -1,12 +1,31 @@
 import { useSearchParams } from "react-router-dom";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+} from "lucide-react";
+import { apiUrl } from "../../api/client";
 import type { Metadata } from "../../api/schemas";
 import { CopyButton, DecisionTimePicker } from "../../components/ui";
+import { apiParams, canonicalParams } from "../../app/url";
 import { shiftDate } from "../../lib/format";
 
 export function ReplayControls({ metadata }: { metadata: Metadata }) {
   const [p, setP] = useSearchParams();
   const date = p.get("date") ?? "2026-01-16";
+  let csv: string | null = null;
+  if (import.meta.env.VITE_API_MODE !== "mock")
+    try {
+      const params = apiParams(
+        canonicalParams(p, true, metadata),
+        true,
+        metadata,
+      );
+      csv = apiUrl("wind-analysis/export", params);
+    } catch {
+      // an invalid rule in the URL; the page shows the error instead
+    }
   const changeDate = (nextDate: string) => {
     const next = new URLSearchParams(p);
     next.set("date", nextDate);
@@ -69,6 +88,12 @@ export function ReplayControls({ metadata }: { metadata: Metadata }) {
           setP(next);
         }}
       />
+      {csv && (
+        <a className="ghost download" href={csv} download>
+          <Download size={14} />
+          Download CSV
+        </a>
+      )}
       <CopyButton value={location.href} />
     </section>
   );
