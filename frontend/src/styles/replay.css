@@ -72,25 +72,36 @@
 }
 .replay-heading {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: center;
-  margin: 8px 0 18px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 44px;
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.replay-heading > div {
+  display: grid;
+  gap: 4px;
+}
+.replay-heading span {
+  font-size: 11px;
+  color: #9fb5cf;
 }
 .replay-heading h1 {
   font-family: Georgia, serif;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 400;
-  margin-top: 4px;
-}
-.replay-heading > p {
-  text-align: right;
-  font-size: 11px;
-  color: #b3c9e5;
+  line-height: 1.2;
 }
 .replay-heading strong {
   color: #e7f3ff;
+  font-size: 15px;
   font-weight: 500;
+  line-height: 1.6;
+}
+.replay-heading button {
+  align-self: center;
+  margin-left: auto;
+  padding: 6px 8px;
 }
 .warnings {
   margin: 10px 0;
@@ -782,9 +793,6 @@
     flex: 1;
     justify-content: flex-end;
   }
-  .replay-heading {
-    align-items: flex-start;
-  }
   .chart-header {
     flex-wrap: wrap;
     gap: 10px;
@@ -812,14 +820,8 @@
     width: 275px;
   }
   .replay-heading {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .replay-heading > p {
-    text-align: left;
-  }
-  .replay-heading h1 {
-    font-size: 28px;
+    gap: 10px 24px;
+    padding: 12px 14px;
   }
   .quick-summary {
     padding: 14px;

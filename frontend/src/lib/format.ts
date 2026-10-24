@@ -33,6 +33,14 @@ export const dateLabel = (value: string, year = false) =>
     month: "short",
     ...(year ? { year: "numeric" } : {}),
   }).format(new Date(value));
+export const dayLabel = (value: string, year = false) =>
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    ...(year ? { year: "numeric" } : {}),
+  }).format(new Date(value));
 export const stamp = (value: string) =>
   `${dateLabel(value, true)}, ${time(value)}`;
 export const minutes = (value: number) =>

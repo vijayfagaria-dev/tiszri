@@ -2,14 +2,23 @@ import { QuickSummary } from "./QuickSummary";
 import { IntervalLedger } from "./IntervalLedger";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { RefreshCw } from "lucide-react";
 import type { DayAnalysis } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import { Qualification, Warnings } from "../../components/ui";
-import { dateLabel, stamp } from "../../lib/format";
+import { dayLabel, time } from "../../lib/format";
 import { statusLabels } from "../../lib/status";
 import { ForecastChart } from "./ForecastChart";
 import { ResponsiveInspector } from "./ResponsiveInspector";
-export function Replay({ result }: { result: ApiResult<DayAnalysis> }) {
+export function Replay({
+  result,
+  refreshing,
+  onRefresh,
+}: {
+  result: ApiResult<DayAnalysis>;
+  refreshing: boolean;
+  onRefresh: () => void;
+}) {
   const data = result.response;
   const [p, setP] = useSearchParams();
   const active = Math.min(
@@ -34,21 +43,32 @@ export function Replay({ result }: { result: ApiResult<DayAnalysis> }) {
   }, [active, p, setP]);
   return (
     <>
-      <div className="replay-heading">
+      <section className="replay-heading panel">
         <div>
-          <p className="eyebrow">THE DAY, REPLAYED.</p>
-          <h1>{dateLabel(data.query.deliveryDate, true)}</h1>
+          <span>Delivery day</span>
+          <h1>{dayLabel(data.query.deliveryDate, true)}</h1>
         </div>
-        <p>
-          Decided: <strong>{stamp(data.query.decisionCutoff.utc)}</strong>
-          <span className="block muted">
-            {data.query.decisionCutoff.position
-              .replaceAll("_", " ")
-              .toLowerCase()}{" "}
-            · {data.query.decisionCutoff.source.toLowerCase()}
-          </span>
-        </p>
-      </div>
+        <div>
+          <span>Decision made</span>
+          <strong>
+            {dayLabel(data.query.decisionCutoff.utc)} at{" "}
+            {time(data.query.decisionCutoff.utc)}
+            {data.query.decisionCutoff.source === "EXPLICIT" && " (exact time)"}
+          </strong>
+        </div>
+        <span role="status" className="sr-only">
+          {refreshing ? "Refreshing…" : ""}
+        </span>
+        <button
+          className="ghost"
+          onClick={onRefresh}
+          disabled={refreshing}
+          aria-label="Refresh"
+          title="Refresh"
+        >
+          <RefreshCw size={14} />
+        </button>
+      </section>
       <Qualification data={data} />
       <Warnings
         warnings={data.warnings}

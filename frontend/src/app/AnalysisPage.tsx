@@ -76,25 +76,33 @@ export function AnalysisPage({
                 : `${dateLabel(result.response.query.from)}–${dateLabel(result.response.query.to, true)}; decision rule ${result.response.query.rule.dayOffset} calendar days relative to delivery at ${result.response.query.rule.localTime} Europe/London.`}
             </p>
           )}
-          <div className="result-tools">
-            <span role="status">
-              {query.isFetching
-                ? "Refreshing the current analysis…"
-                : `${result.response.resultState.toLowerCase()} evidence · ${result.response.metadata.counts.matched} matched half-hours`}
-            </span>
-            <button
-              className="ghost"
-              onClick={() => {
+          {!replay && (
+            <div className="result-tools">
+              <span role="status">
+                {query.isFetching
+                  ? "Refreshing the current analysis…"
+                  : `${result.response.resultState.toLowerCase()} evidence · ${result.response.metadata.counts.matched} matched half-hours`}
+              </span>
+              <button
+                className="ghost"
+                onClick={() => {
+                  void query.refetch();
+                }}
+                disabled={query.isFetching}
+              >
+                <RefreshCw size={13} />
+                Refresh
+              </button>
+            </div>
+          )}
+          {"intervals" in result.response ? (
+            <Replay
+              result={{ ...result, response: result.response }}
+              refreshing={query.isFetching}
+              onRefresh={() => {
                 void query.refetch();
               }}
-              disabled={query.isFetching}
-            >
-              <RefreshCw size={13} />
-              Refresh
-            </button>
-          </div>
-          {"intervals" in result.response ? (
-            <Replay result={{ ...result, response: result.response }} />
+            />
           ) : (
             <Overview
               result={{ ...result, response: result.response }}

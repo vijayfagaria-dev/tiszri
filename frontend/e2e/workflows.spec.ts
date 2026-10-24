@@ -167,9 +167,9 @@ test("custom cutoff validation and exact-cutoff URL restore", async ({
     .fill("2026-01-15T12:00:00Z");
   await page.getByRole("button", { name: "Apply cutoff" }).click();
   await expect(page).toHaveURL(/cutoff=2026-01-15T12/);
-  await expect(page.locator(".replay-heading")).toContainText("explicit");
+  await expect(page.locator(".replay-heading")).toContainText("exact time");
   await page.reload();
-  await expect(page.locator(".replay-heading")).toContainText("explicit");
+  await expect(page.locator(".replay-heading")).toContainText("exact time");
 });
 
 test("degraded readiness remains distinguishable from an analysis failure", async ({
