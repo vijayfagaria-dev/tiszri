@@ -2,28 +2,33 @@
 BACKEND := cd backend && env -u VIRTUAL_ENV uv run
 URL ?= http://localhost:8000
 
-.PHONY: help setup dev test traceability live lint format typecheck ci fixtures record up down latency
+.PHONY: help setup dev web test traceability live lint format typecheck ci fixtures record up down latency
 
 help:
-	@echo "setup      install backend dependencies"
+	@echo "setup      install backend and frontend dependencies"
 	@echo "dev        run the API locally with live Elexon data (http://localhost:8000)"
+	@echo "web        run the web app against that API (http://localhost:5173)"
 	@echo "test       run the backend test suite"
 	@echo "traceability  run the tests and list which SRS requirements they cover"
 	@echo "live       check the assumptions about the live Elexon API still hold"
 	@echo "lint       check formatting and lint rules"
 	@echo "format     apply formatting and safe lint fixes"
 	@echo "typecheck  run mypy"
-	@echo "ci         lint + typecheck + test (what CI runs)"
+	@echo "ci         backend lint + typecheck + test (the backend CI job)"
 	@echo "fixtures   regenerate the frontend's API fixtures from the backend"
 	@echo "record     re-record the Elexon source data used by tests"
-	@echo "up / down  start / stop the stack with Docker Compose (SOURCE_MODE=fixtures for offline)"
+	@echo "up / down  start / stop web (:8080) and API (:8000) with Docker Compose (SOURCE_MODE=fixtures for offline)"
 	@echo "latency    print Server-Timing for a cold and two warm requests (URL=...)"
 
 setup:
 	cd backend && uv sync
+	cd frontend && yarn install --frozen-lockfile
 
 dev:
 	$(BACKEND) uvicorn app.main:app --reload --port 8000
+
+web:
+	cd frontend && yarn dev:api
 
 test:
 	$(BACKEND) pytest
@@ -54,7 +59,7 @@ record:
 	$(BACKEND) python -m scripts.record_fixtures
 
 up:
-	docker compose up --build api
+	docker compose up --build
 
 down:
 	docker compose down

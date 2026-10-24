@@ -11,10 +11,8 @@ services:
     volumes:
       - ./contracts/fixtures/source:/fixtures:ro
 
-  # The web app (built from ./frontend) serves on :8080 and proxies /api to the api service.
-  # Start it with: docker compose --profile web up
+  # The web app on :8080; it proxies /api to the api service.
   web:
-    profiles: ["web"]
     build: ./frontend
     ports:
       - "8080:8080"

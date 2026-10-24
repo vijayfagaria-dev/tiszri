@@ -5,19 +5,17 @@ afterEach(() => vi.unstubAllGlobals());
 const schema = z.object({ value: z.number() });
 describe("API boundary", () => {
   it("sends documented parameters, cancellation and captures headers", async () => {
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue(
-        Response.json(
-          { value: 1, future: true },
-          {
-            headers: {
-              "X-Request-ID": "test-request",
-              "Server-Timing": "total;dur=12",
-            },
+    const fetcher = vi.fn().mockResolvedValue(
+      Response.json(
+        { value: 1, future: true },
+        {
+          headers: {
+            "X-Request-ID": "test-request",
+            "Server-Timing": "total;dur=12",
           },
-        ),
-      );
+        },
+      ),
+    );
     vi.stubGlobal("fetch", fetcher);
     const controller = new AbortController();
     const result = await request(
@@ -54,22 +52,20 @@ describe("API boundary", () => {
   it("uses envelope retryability and Retry-After, not status guesses", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          Response.json(
-            {
-              error: {
-                code: "UPSTREAM_RATE_LIMITED",
-                message: "Wait",
-                details: [],
-                requestId: "test",
-                retryable: true,
-              },
+      vi.fn().mockResolvedValue(
+        Response.json(
+          {
+            error: {
+              code: "UPSTREAM_RATE_LIMITED",
+              message: "Wait",
+              details: [],
+              requestId: "test",
+              retryable: true,
             },
-            { status: 503, headers: { "Retry-After": "2" } },
-          ),
+          },
+          { status: 503, headers: { "Retry-After": "2" } },
         ),
+      ),
     );
     try {
       await request("wind-analysis", schema);
