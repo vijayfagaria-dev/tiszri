@@ -5,6 +5,8 @@ export const number = (value: number | null | undefined, signed = false) =>
         maximumFractionDigits: 0,
         signDisplay: signed ? "exceptZero" : "auto",
       }).format(value);
+export const mw = (value: number | null | undefined, signed = false) =>
+  value == null ? "Unavailable" : `${number(value, signed)} MW`;
 export const percent = (value: number) => `${Math.floor(value * 1000) / 10}%`;
 export const time = (value: string) =>
   new Intl.DateTimeFormat("en-GB", {

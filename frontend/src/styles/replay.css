@@ -216,6 +216,9 @@
   font-size: 17px;
   margin: 0 0 7px;
 }
+.compact .metric-value.unavailable {
+  font-size: 13px;
+}
 .compact .metric-value small {
   display: block;
   font-size: 8px;

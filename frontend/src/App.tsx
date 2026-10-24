@@ -113,7 +113,11 @@ export default function App() {
             Wind Forecast Intelligence
           </span>
           <span>Historical evidence. Clearer perspective.</span>
-          <span>Europe/London · Contract 1.0.0</span>
+          <span>
+            Europe/London
+            {metadata.data &&
+              ` · Contract ${metadata.data.response.contractVersion}`}
+          </span>
         </footer>
       </div>
     </>

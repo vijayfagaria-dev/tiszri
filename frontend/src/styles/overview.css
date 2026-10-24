@@ -182,6 +182,9 @@
   font-weight: 500;
   letter-spacing: 0;
 }
+.metric-value.unavailable {
+  font-size: 17px;
+}
 .metric.amber .metric-value {
   color: var(--amber);
 }

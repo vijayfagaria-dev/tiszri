@@ -1,7 +1,7 @@
 import { Lightbulb, ScanLine } from "lucide-react";
 import type { DayAnalysis, Interval } from "../../api/schemas";
 import { directionLabel, statusLabels } from "../../lib/status";
-import { minutes, number, stamp, time } from "../../lib/format";
+import { minutes, stamp, time, mw } from "../../lib/format";
 export function Inspector({
   interval: i,
   data,
@@ -74,16 +74,15 @@ export function Inspector({
             : "Unavailable"}
         </dd>
         <dt>Forecast value</dt>
-        <dd>{number(i.forecast?.generation)} MW</dd>
+        <dd>{mw(i.forecast?.generation)}</dd>
         <dt>Actual value</dt>
-        <dd>{number(i.actual?.generation)} MW</dd>
+        <dd>{mw(i.actual?.generation)}</dd>
         <dt>Signed error</dt>
         <dd className={i.error?.direction === "UNDER" ? "teal" : "amber"}>
-          {number(i.error?.signed, true)} MW (
-          {directionLabel(i.error?.direction)})
+          {mw(i.error?.signed, true)} ({directionLabel(i.error?.direction)})
         </dd>
         <dt>Absolute error</dt>
-        <dd>{number(i.error?.absolute)} MW</dd>
+        <dd>{mw(i.error?.absolute)}</dd>
       </dl>
       {i.exclusionReason && <p className="notice">{i.exclusionReason}</p>}
       {i.flags.map((flag) => (

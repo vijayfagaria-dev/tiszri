@@ -1,6 +1,6 @@
 import type { ApiResult } from "../../api/client";
 import type { DayAnalysis, Metadata, Summary } from "../../api/schemas";
-import { stamp, number } from "../../lib/format";
+import { stamp, mw } from "../../lib/format";
 import { CopyButton } from "../../components/ui";
 import { FileText, Settings2 } from "lucide-react";
 export function Receipts({
@@ -61,9 +61,9 @@ export function Receipts({
           {"sensitivity" in d && (
             <p>
               On-the-hour sensitivity: {d.sensitivity.onTheHourOnly.n} matched;
-              MAE {number(d.sensitivity.onTheHourOnly.mae)} MW, RMSE{" "}
-              {number(d.sensitivity.onTheHourOnly.rmse)} MW, bias{" "}
-              {number(d.sensitivity.onTheHourOnly.bias, true)} MW.
+              MAE {mw(d.sensitivity.onTheHourOnly.mae)}, RMSE{" "}
+              {mw(d.sensitivity.onTheHourOnly.rmse)}, bias{" "}
+              {mw(d.sensitivity.onTheHourOnly.bias, true)}.
             </p>
           )}
         </div>

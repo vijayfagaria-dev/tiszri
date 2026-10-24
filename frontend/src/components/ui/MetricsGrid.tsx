@@ -71,10 +71,14 @@ export function MetricsGrid({
               <p>{item.help}</p>
             </details>
           </div>
-          <div className="metric-value">
-            {item.value}
-            <small>{item.value !== "Unavailable" && item.unit}</small>
-          </div>
+          {item.value === "Unavailable" ? (
+            <div className="metric-value unavailable">{item.value}</div>
+          ) : (
+            <div className="metric-value">
+              {item.value}
+              <small>{item.unit}</small>
+            </div>
+          )}
           <h3>{item.title}</h3>
           <p>{item.subtitle}</p>
           <div className="metric-rule" />

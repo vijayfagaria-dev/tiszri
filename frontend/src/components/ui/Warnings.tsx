@@ -11,10 +11,10 @@ export function Warnings({
 }) {
   return (
     <div className="warnings">
-      {warnings.map((w) => (
+      {warnings.map((w, index) => (
         <details
           className={`notice ${w.severity === "INFO" ? "info" : ""}`}
-          key={w.code}
+          key={`${w.code}-${index}`}
           open={w.severity === "WARNING"}
         >
           <summary>

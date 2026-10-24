@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { CalendarDays } from "lucide-react";
 import type { Metadata, Summary } from "../../api/schemas";
-import { dateLabel, number } from "../../lib/format";
+import { dateLabel, mw } from "../../lib/format";
 import { replayLink } from "../../app/url";
 interface Props {
   data: Summary;
@@ -41,7 +41,7 @@ export function DailyPerformance({
             className={`day ${d.resultState.toLowerCase()}`}
             key={d.deliveryDate}
             to={replayLink(d.deliveryDate, data.query.rule, metadata, search)}
-            aria-label={`${dateLabel(d.deliveryDate)}, ${d.resultState}, MAE ${number(d.mae)} MW`}
+            aria-label={`${dateLabel(d.deliveryDate)}, ${d.resultState}, MAE ${mw(d.mae)}`}
           >
             <span
               className={`day-dot ${d.mae != null && d.mae > 3000 ? "high" : d.bias != null && d.bias < 0 ? "low" : ""}`}
@@ -58,11 +58,11 @@ export function DailyPerformance({
                 : Number(d.deliveryDate.slice(-2))}
             </span>
             <span className="day-tip">
-              {dateLabel(d.deliveryDate)} · {number(d.mae)} MW MAE
+              {dateLabel(d.deliveryDate)} · {mw(d.mae)} MAE
               <br />
               {d.matched}/{d.expected} matched
             </span>
-            {ranked && <small>{number(d.mae)} MW</small>}
+            {ranked && <small>{mw(d.mae)}</small>}
           </Link>
         ))}
       </div>

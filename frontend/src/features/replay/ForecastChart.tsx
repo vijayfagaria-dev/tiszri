@@ -1,7 +1,7 @@
 import { seriesPath } from "./chartGeometry";
 import { useState } from "react";
 import type { DayAnalysis } from "../../api/schemas";
-import { number, time } from "../../lib/format";
+import { number, time, mw } from "../../lib/format";
 import { directionLabel, statusLabels } from "../../lib/status";
 export function ForecastChart({
   data,
@@ -151,15 +151,15 @@ export function ForecastChart({
           {time(selected.startTime)} · SP {selected.settlementPeriod}
         </strong>
         <span className="purple">
-          Forecast <b>{number(selected.forecast?.generation)} MW</b>
+          Forecast <b>{mw(selected.forecast?.generation)}</b>
         </span>
         <span>
-          Actual <b>{number(selected.actual?.generation)} MW</b>
+          Actual <b>{mw(selected.actual?.generation)}</b>
         </span>
         <span
           className={selected.error?.direction === "UNDER" ? "teal" : "amber"}
         >
-          {number(selected.error?.signed, true)} MW ·{" "}
+          {mw(selected.error?.signed, true)} ·{" "}
           {directionLabel(selected.error?.direction)}
         </span>
         <span>
@@ -224,7 +224,7 @@ export function ForecastChart({
             key={i.settlementPeriod}
             className={`${i.settlementPeriod === active ? "active " : ""}${i.error ? i.error.direction.toLowerCase() : "excluded"}`}
             onClick={() => select(i.settlementPeriod)}
-            aria-label={`Error interval ${i.settlementPeriod}: ${number(i.error?.signed, true)} MW`}
+            aria-label={`Error interval ${i.settlementPeriod}: ${mw(i.error?.signed, true)}`}
           >
             <span
               style={{
