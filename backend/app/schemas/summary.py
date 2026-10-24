@@ -25,6 +25,7 @@ from app.schemas.common import (
     WarningOut,
     counts_out,
     cutoff_out,
+    result_hash,
     rule_out,
     source_out,
     unit_summary,
@@ -55,6 +56,7 @@ class SummaryMetadataOut(ApiModel):
     counts: CountsOut
     coverage: float
     day_count: int
+    result_hash: str = ""
 
 
 class SummaryMetricsOut(ApiModel):
@@ -152,7 +154,7 @@ def summary_response(
     else:
         result_state = "PARTIAL"
 
-    return AccuracySummaryResponse(
+    response = AccuracySummaryResponse(
         result_state=result_state,
         query=SummaryQueryOut(
             from_=report.first.isoformat(),
@@ -213,6 +215,8 @@ def summary_response(
         sensitivity=SensitivityOut(on_the_hour_only=_sensitivity(summary.on_the_hour)),
         warnings=[warning_out(w) for w in report.warnings],
     )
+    response.metadata.result_hash = result_hash(response.model_dump(by_alias=True))
+    return response
 
 
 def _day_summary(day: DayAnalysis) -> DaySummaryOut:

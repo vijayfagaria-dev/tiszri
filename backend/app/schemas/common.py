@@ -1,5 +1,7 @@
 """Response models shared by several endpoints. Field names serialise to camelCase."""
 
+import hashlib
+import json
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -11,7 +13,7 @@ from app.models.enums import Status
 from app.services.loader import SourceInfo
 from app.utils.dates import format_london, format_utc
 
-CONTRACT_VERSION = "1.1.0"
+CONTRACT_VERSION = "1.2.0"
 ALGORITHM_VERSION = "replay/1.0.0"
 POLICY_IDS = {
     "selection": "LATEST_ELIGIBLE_INCLUSIVE",
@@ -119,6 +121,24 @@ class WarningOut(ApiModel):
     affected_count: int
     affected_intervals: list[str]
     data: dict[str, Any] | None
+
+
+# Fields that differ between otherwise identical responses; left out of the result hash.
+VOLATILE_FIELDS = {"requestId", "generatedAt", "fetchedAt", "cache", "resultHash"}
+
+
+def result_hash(body: dict[str, Any]) -> str:
+    """Fingerprint of a response's content: the same inputs and data always give the same hash."""
+    canonical = json.dumps(_without_volatile(body), sort_keys=True, separators=(",", ":"))
+    return "sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
+
+
+def _without_volatile(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: _without_volatile(v) for k, v in value.items() if k not in VOLATILE_FIELDS}
+    if isinstance(value, list):
+        return [_without_volatile(v) for v in value]
+    return value
 
 
 def error_direction(error: int) -> str:

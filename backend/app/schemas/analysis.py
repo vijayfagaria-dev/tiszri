@@ -23,6 +23,7 @@ from app.schemas.common import (
     cutoff_out,
     error_direction,
     metrics_out,
+    result_hash,
     source_out,
     unit_summary,
     warning_out,
@@ -48,6 +49,7 @@ class AnalysisMetadataOut(ApiModel):
     policy_ids: PolicyIdsOut
     counts: CountsOut
     coverage: float
+    result_hash: str = ""
 
 
 class HighlightsOut(ApiModel):
@@ -118,7 +120,7 @@ def day_response(report: DayReport, settings: Settings, request_id: str) -> DayA
         eligible=day.versions_eligible,
         after_cutoff=day.versions_covering - day.versions_eligible,
     )
-    return DayAnalysisResponse(
+    response = DayAnalysisResponse(
         result_state=day.result_state,
         query=AnalysisQueryOut(
             delivery_date=day.delivery_date.isoformat(), decision_cutoff=cutoff_out(day.cutoff)
@@ -146,6 +148,8 @@ def day_response(report: DayReport, settings: Settings, request_id: str) -> DayA
         intervals=[_interval_out(interval, cutoff) for interval in day.intervals],
         warnings=[warning_out(w) for w in report.warnings],
     )
+    response.metadata.result_hash = result_hash(response.model_dump(by_alias=True))
+    return response
 
 
 def _interval_out(interval: Interval, cutoff: datetime) -> IntervalOut:

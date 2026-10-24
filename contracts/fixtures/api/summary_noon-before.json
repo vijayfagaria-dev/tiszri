@@ -12,7 +12,7 @@
     "businessTimezone": "Europe/London"
   },
   "metadata": {
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "algorithmVersion": "replay/1.0.0",
     "requestId": "fixture-summary-noon-before",
     "generatedAt": "2026-10-24T17:46:46Z",
@@ -92,7 +92,8 @@
       }
     },
     "coverage": 1.0,
-    "dayCount": 31
+    "dayCount": 31,
+    "resultHash": "sha256:924b80db839bcc9dc3c93bdaab75534049a9f79ea0c88f06b9234a3ef4cdf098"
   },
   "metrics": {
     "n": 1488,

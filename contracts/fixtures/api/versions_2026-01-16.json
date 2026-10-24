@@ -4,7 +4,7 @@
     "businessTimezone": "Europe/London"
   },
   "metadata": {
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "algorithmVersion": "replay/1.0.0",
     "requestId": "fixture-versions-2026-01-16",
     "generatedAt": "2026-10-24T17:46:46Z",

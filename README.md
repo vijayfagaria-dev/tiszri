@@ -81,8 +81,9 @@ curl -OJ "http://localhost:8000/api/v1/wind-analysis/export?deliveryDate=2026-01
 
 The decision time is either an exact instant (`decisionCutoff=2026-01-15T09:00:00Z`) or a rule
 relative to the delivery day (`cutoffDayOffset=-1&cutoffLocalTime=09:00`); without either, the
-default (09:00 UK time the day before) is applied and echoed back. Every field, status, warning and
-error code is specified in [`contracts/openapi.yaml`](contracts/openapi.yaml).
+default (09:00 UK time the day before) is applied and echoed back. Each analysis carries a
+`resultHash`, so two people can confirm they are looking at identical results. Every field, status,
+warning and error code is specified in [`contracts/openapi.yaml`](contracts/openapi.yaml).
 
 ## How the analysis works
 

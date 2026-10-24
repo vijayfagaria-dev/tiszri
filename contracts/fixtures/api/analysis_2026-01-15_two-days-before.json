@@ -16,7 +16,7 @@
     "businessTimezone": "Europe/London"
   },
   "metadata": {
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "algorithmVersion": "replay/1.0.0",
     "requestId": "fixture-analysis-2026-01-15-two-days-before",
     "generatedAt": "2026-10-24T17:46:46Z",
@@ -99,7 +99,8 @@
         "AMBIGUOUS_ACTUAL": 0
       }
     },
-    "coverage": 0.9166666666666666
+    "coverage": 0.9166666666666666,
+    "resultHash": "sha256:964b0f1c8ae1d33c0495ac95e7170fa4b57a316e8b07e0deca0549500fd0f338"
   },
   "metrics": {
     "n": 44,

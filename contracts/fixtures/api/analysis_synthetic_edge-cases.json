@@ -16,7 +16,7 @@
     "businessTimezone": "Europe/London"
   },
   "metadata": {
-    "contractVersion": "1.1.0",
+    "contractVersion": "1.2.0",
     "algorithmVersion": "replay/1.0.0",
     "requestId": "fixture-analysis-synthetic-edge-cases",
     "generatedAt": "2026-10-24T17:46:46Z",
@@ -99,7 +99,8 @@
         "AMBIGUOUS_ACTUAL": 1
       }
     },
-    "coverage": 0.75
+    "coverage": 0.75,
+    "resultHash": "sha256:7a11c36e4de6c488ced9a1664f605eae0ff59a2428d9705298542c08316f06e1"
   },
   "metrics": {
     "n": 36,

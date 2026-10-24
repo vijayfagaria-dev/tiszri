@@ -476,3 +476,18 @@ async def test_csv_export_validates_like_the_replay(client: httpx.AsyncClient) -
     response = await get(client, "/wind-analysis/export", deliveryDate="2026-03-01")
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "INVALID_DELIVERY_DATE"
+
+
+async def test_result_hash_identifies_the_analysis(client: httpx.AsyncClient) -> None:
+    params = {"deliveryDate": "2026-01-16", "cutoffDayOffset": "-1", "cutoffLocalTime": "12:00"}
+    first = (
+        await client.get("/api/v1/wind-analysis", params=params, headers={"X-Request-ID": "a"})
+    ).json()
+    again = (
+        await client.get("/api/v1/wind-analysis", params=params, headers={"X-Request-ID": "b"})
+    ).json()
+    other = (await get(client, "/wind-analysis", deliveryDate="2026-01-16")).json()
+
+    assert first["metadata"]["resultHash"].startswith("sha256:")
+    assert first["metadata"]["resultHash"] == again["metadata"]["resultHash"]
+    assert first["metadata"]["resultHash"] != other["metadata"]["resultHash"]
