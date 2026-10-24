@@ -114,6 +114,19 @@
     "description": "Hindsight replay after delivery ended"
   },
   {
+    "file": "analysis_2026-01-16_explicit-cutoff.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16",
+        "decisionCutoff": "2026-01-15T12:00:00Z"
+      }
+    },
+    "source": "recorded",
+    "description": "Exact decision time instead of a rule"
+  },
+  {
     "file": "analysis_synthetic_edge-cases.json",
     "status": 200,
     "request": {

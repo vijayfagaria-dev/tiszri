@@ -91,6 +91,12 @@ SCENARIOS = [
         "Hindsight replay after delivery ended",
     ),
     Scenario(
+        "analysis_2026-01-16_explicit-cutoff",
+        "/wind-analysis",
+        {"deliveryDate": "2026-01-16", "decisionCutoff": "2026-01-15T12:00:00Z"},
+        "Exact decision time instead of a rule",
+    ),
+    Scenario(
         "analysis_synthetic_edge-cases",
         "/wind-analysis",
         {"deliveryDate": "2026-01-16"},
