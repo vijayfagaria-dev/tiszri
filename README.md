@@ -1,9 +1,12 @@
 # Wind Forecast Intelligence
 
+[![Live demo](https://img.shields.io/badge/live%20demo-tiszri.vercel.app-5b6cff?logo=vercel)](https://tiszri.vercel.app)
+[![CI](https://github.com/vijayfagaria-dev/tiszri/actions/workflows/ci.yml/badge.svg)](https://github.com/vijayfagaria-dev/tiszri/actions/workflows/ci.yml)
+
 Replay any day in January 2026 as a GB day-ahead trader would have seen it: which national wind
 forecast was available at the decision time, what actually happened, and how far off it was.
 
-**Live:** https://tiszri.vercel.app (API at https://tiszri.vercel.app/api/v1/metadata)
+**Try it:** [tiszri.vercel.app](https://tiszri.vercel.app) · API: [`/api/v1/metadata`](https://tiszri.vercel.app/api/v1/metadata)
 
 A web app and an API answer two questions using Elexon data only:
 
