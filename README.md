@@ -3,6 +3,8 @@
 Replay any day in January 2026 as a GB day-ahead trader would have seen it: which national wind
 forecast was available at the decision time, what actually happened, and how far off it was.
 
+**Live:** https://tiszri.vercel.app (API at https://tiszri.vercel.app/api/v1/metadata)
+
 A web app and an API answer two questions using Elexon data only:
 
 1. **What was the latest wind forecast available when the purchase decision was made?**
@@ -155,7 +157,8 @@ secrets are needed. The most useful ones:
 
 ## Deployment
 
-[`vercel.json`](vercel.json) deploys the repository as one Vercel project with two
+The live site is https://tiszri.vercel.app. [`vercel.json`](vercel.json) deploys the repository
+as one Vercel project with two
 [services](https://vercel.com/docs/services): the static web app, and the FastAPI backend as a
 Vercel Function. `/api/*` goes to the backend with the path unchanged; everything else goes to
 the web app. Because both are on one domain, the browser calls `/api/v1` directly and needs no
