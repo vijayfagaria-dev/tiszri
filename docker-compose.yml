@@ -1,0 +1,22 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: development
+      # http = live Elexon API; fixtures = recorded January 2026 data (offline, deterministic)
+      SOURCE_MODE: ${SOURCE_MODE:-http}
+      FIXTURES_DIR: /fixtures
+    volumes:
+      - ./contracts/fixtures/source:/fixtures:ro
+
+  # The web app (built from ./frontend) serves on :8080 and proxies /api to the api service.
+  # Start it with: docker compose --profile web up
+  web:
+    profiles: ["web"]
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
