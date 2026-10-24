@@ -127,6 +127,10 @@ half-hours the miss was at most 4,145 MW. On 15 January the 11:30 forecast was p
   `contracts/openapi.yaml`.
 - **Fixture checks** that the frontend's mock data matches the contract and the current backend.
 
+`make traceability` runs the suite and lists each SRS requirement with the tests that cover it.
+`make live` checks against the real Elexon API that the data still has the shape, hourly
+resolution and history the service relies on; CI runs it daily.
+
 ## Configuration
 
 Settings come from environment variables; see [`backend/.env.example`](backend/.env.example). No
