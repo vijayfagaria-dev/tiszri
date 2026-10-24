@@ -258,6 +258,42 @@
   border: 1px solid #38578588;
   font-size: 12px;
 }
+.methodology {
+  margin-top: 22px;
+  padding: 14px 20px;
+}
+.methodology > summary {
+  color: #c2d3ef;
+  font-size: 12px;
+}
+.methodology-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px 28px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.methodology h3 {
+  margin-bottom: 6px;
+  color: #e5f0ff;
+  font-size: 12px;
+}
+.methodology ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 16px;
+}
+.methodology strong {
+  color: #e5f0ff;
+  font-weight: 500;
+}
+.methodology code {
+  font-size: 11px;
+  color: #cab8fb;
+}
 @media (min-width: 1700px) {
   .app-shell {
     padding-top: 28px;

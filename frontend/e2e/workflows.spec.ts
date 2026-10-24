@@ -211,3 +211,44 @@ test("info tips show on hover or focus and close on leave, outside click or Esca
   await page.locator(".app-footer").click();
   await expect(tip).toBeHidden();
 });
+
+// Changes the URL inside the app, as the back button or an edited link would.
+const navigate = (page: import("@playwright/test").Page, url: string) =>
+  page.evaluate((target) => {
+    history.pushState({}, "", target);
+    dispatchEvent(new PopStateEvent("popstate"));
+  }, url);
+
+test("an invalid link explains itself and keeps the last valid result", async ({
+  page,
+}) => {
+  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
+  await expect(page.locator(".forecast-used")).toBeVisible();
+  await navigate(page, "/replay?date=2026-01-16&rule=bogus");
+  await expect(page.getByRole("alert")).toContainText(
+    "Unknown decision-time rule",
+  );
+  await expect(page.locator(".forecast-used")).toBeVisible();
+  await navigate(page, "/?from=2026-01-20&to=2026-01-10&rule=d1-0900");
+  await expect(page.getByRole("alert")).toContainText(
+    "The start date must be before the end date.",
+  );
+});
+
+test("overview date range and method notes", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByLabel("From", { exact: true })).toHaveValue(
+    "2026-01-02",
+  );
+  await expect(page.getByLabel("To", { exact: true })).toHaveValue(
+    "2026-02-01",
+  );
+  await page.getByLabel("To", { exact: true }).fill("2026-01-31");
+  await expect(page).toHaveURL(/to=2026-01-31/);
+  await page.goto("/replay?date=2026-01-16&rule=d1-0900");
+  await page.getByText("How it’s calculated", { exact: true }).click();
+  await expect(page.locator(".methodology")).toContainText(
+    "only forecasts published at or before the decision time are eligible",
+  );
+  await expect(page.locator(".methodology")).toContainText("MAE");
+});

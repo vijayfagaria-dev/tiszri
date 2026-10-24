@@ -40,7 +40,6 @@ export function useAnalysis(
       problem?.message,
     ],
     queryFn: ({ signal }) => {
-      if (problem) throw problem;
       // An analysis is what contacts Elexon, so refresh the source status once it settles.
       const refreshHealth = () =>
         void queryClient.invalidateQueries({ queryKey: ["health"] });
@@ -74,6 +73,9 @@ export function useAnalysis(
             )
       ).finally(refreshHealth);
     },
+    // Invalid input never reaches the API; the page explains it and keeps the
+    // previous result on screen.
+    enabled: !problem,
     staleTime: 300000,
     placeholderData: keepPreviousData,
   });

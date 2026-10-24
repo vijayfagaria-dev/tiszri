@@ -1,4 +1,5 @@
 import type { Metadata, Rule } from "../api/schemas";
+import { dateLabel } from "../lib/format";
 export const aliases: Record<string, string> = {
   TWO_DAYS_BEFORE_0900: "d2-0900",
   MORNING_BEFORE_0900: "d1-0900",
@@ -75,16 +76,50 @@ export function canonicalParams(
     p.set("rule", ruleAlias(metadata.cutoff.defaultRule, metadata));
   return p;
 }
+// Checked here so a bad link shows a clear message and keeps the last valid result.
+const isDate = (value: string | null): value is string =>
+  !!value &&
+  /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+  Number.isFinite(Date.parse(value));
+function checkRule(rule: Rule, metadata: Metadata) {
+  const { range } = metadata.cutoff;
+  const [hours, minutes] = rule.localTime.split(":").map(Number);
+  if (
+    hours > 23 ||
+    minutes > 59 ||
+    rule.dayOffset < range.minDayOffset ||
+    rule.dayOffset > range.maxDayOffset ||
+    (rule.dayOffset === range.maxDayOffset &&
+      rule.localTime > range.maxLocalTimeAtMaxOffset)
+  )
+    throw new Error(
+      `The decision time must be between ${-range.minDayOffset} days before and ${range.maxDayOffset} days after the delivery day.`,
+    );
+}
 export function apiParams(
   p: URLSearchParams,
   replay: boolean,
   metadata: Metadata,
 ) {
+  const supported = metadata.supportedDeliveryWindow;
+  const inWindow = (value: string) =>
+    value >= supported.from && value <= supported.to;
+  const span = `${dateLabel(supported.from, true)} and ${dateLabel(supported.to, true)}`;
   const result = new URLSearchParams();
-  if (replay) result.set("deliveryDate", p.get("date") ?? "2026-01-16");
-  else {
-    result.set("from", p.get("from") ?? metadata.summaryDefaults.from);
-    result.set("to", p.get("to") ?? metadata.summaryDefaults.to);
+  const date = p.get("date") ?? "2026-01-16";
+  if (replay) {
+    if (!isDate(date) || !inWindow(date))
+      throw new Error(`Choose a delivery date between ${span}.`);
+    result.set("deliveryDate", date);
+  } else {
+    const from = p.get("from") ?? metadata.summaryDefaults.from;
+    const to = p.get("to") ?? metadata.summaryDefaults.to;
+    if (!isDate(from) || !isDate(to) || !inWindow(from) || !inWindow(to))
+      throw new Error(`Choose dates between ${span}.`);
+    if (from > to)
+      throw new Error("The start date must be before the end date.");
+    result.set("from", from);
+    result.set("to", to);
   }
   if (replay && p.has("cutoff")) {
     const value = p.get("cutoff")!;
@@ -95,6 +130,7 @@ export function apiParams(
       throw new Error(
         "The cutoff must be a valid UTC instant with seconds and Z.",
       );
+    checkRule(londonRule(value, date), metadata);
     result.set("decisionCutoff", value);
   } else {
     const rule = ruleFromAlias(
@@ -105,11 +141,13 @@ export function apiParams(
       throw new Error(
         "Unknown decision-time rule. Select a preset to continue.",
       );
+    checkRule(rule, metadata);
     result.set("cutoffDayOffset", String(rule.dayOffset));
     result.set("cutoffLocalTime", rule.localTime);
   }
   return result;
 }
+
 export function replayLink(
   date: string,
   rule: Rule,

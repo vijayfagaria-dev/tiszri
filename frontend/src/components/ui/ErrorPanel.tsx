@@ -5,9 +5,11 @@ import { ApiError } from "../../api/client";
 export function ErrorPanel({
   error,
   retry,
+  retryLabel = "Try again",
 }: {
   error: Error;
   retry: () => void;
+  retryLabel?: string;
 }) {
   const [now, setNow] = useState(Date.now);
   const [started] = useState(Date.now);
@@ -38,7 +40,7 @@ export function ErrorPanel({
         </>
       )}
       <button disabled={wait > 0} onClick={retry}>
-        {wait ? `Retry in ${wait}s` : "Try again"}
+        {wait ? `Retry in ${wait}s` : retryLabel}
       </button>
     </section>
   );

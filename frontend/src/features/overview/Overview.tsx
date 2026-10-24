@@ -14,6 +14,7 @@ import type { Metadata, Summary } from "../../api/schemas";
 import type { ApiResult } from "../../api/client";
 import { DecisionTimePicker, MetricsGrid, Warnings } from "../../components/ui";
 import { WindArt } from "../../components/WindArt";
+import { DateRange } from "./DateRange";
 import { dateLabel, mw, percent } from "../../lib/format";
 import { replayLink } from "../../app/url";
 export function Overview({
@@ -29,11 +30,51 @@ export function Overview({
   const share = over ? data.metrics.overShare : data.metrics.underShare;
   // 90th percentile of forecast − actual: how far wind fell short of the forecast
   const shortfall = data.distribution.signedError?.p90 ?? null;
-  const change = (key: string, value: string) => {
+  const change = (values: Record<string, string>) => {
     const next = new URLSearchParams(search);
-    next.set(key, value);
+    for (const [key, value] of Object.entries(values)) next.set(key, value);
     setSearch(next);
   };
+  const controls = (
+    <div className="decision-control">
+      <DecisionTimePicker
+        metadata={metadata}
+        alias={search.get("rule") ?? "d1-0900"}
+        onChange={(alias) => change({ rule: alias })}
+      />
+      <DateRange
+        metadata={metadata}
+        from={data.query.from}
+        to={data.query.to}
+        onChange={(from, to) => change({ from, to })}
+      />
+    </div>
+  );
+
+  if (data.resultState === "EMPTY")
+    return (
+      <>
+        <div className="hero-heading">
+          <h1 className="empty-heading">
+            How far could the forecast be trusted?
+          </h1>
+          {controls}
+        </div>
+        <section className="panel empty-panel">
+          <h2>Nothing to compare at this decision time</h2>
+          <p>
+            None of the days from {dateLabel(data.query.from)} to{" "}
+            {dateLabel(data.query.to, true)} had a forecast available by then,
+            usually because forecasts only look about three days ahead. Choose a
+            later decision time.
+          </p>
+          <button onClick={() => change({ rule: "d1-0900" })}>
+            Switch to day before, 09:00
+          </button>
+        </section>
+      </>
+    );
+
   return (
     <>
       <section className="overview-hero">
@@ -43,13 +84,7 @@ export function Overview({
             <Sparkles size={13} />
             JANUARY, DECODED.
           </p>
-          <div className="decision-control">
-            <DecisionTimePicker
-              metadata={metadata}
-              alias={search.get("rule") ?? "d1-0900"}
-              onChange={(alias) => change("rule", alias)}
-            />
-          </div>
+          {controls}
         </div>
         <div className="hero-content">
           <article className="trust-card">
@@ -59,11 +94,9 @@ export function Overview({
               forecast be <em>trusted?</em>
             </h1>
             <p className="hero-description">
-              {data.resultState === "EMPTY"
-                ? "There is no matched evidence at this decision time."
-                : over
-                  ? "The forecast expected more wind than actually arrived in most matched half-hours."
-                  : "The forecast expected less wind than actually arrived in most matched half-hours."}
+              {over
+                ? "The forecast expected more wind than actually arrived in most matched half-hours."
+                : "The forecast expected less wind than actually arrived in most matched half-hours."}
             </p>
             <div className="trust-stat">
               <strong>
@@ -171,7 +204,7 @@ export function Overview({
         data={data}
         metadata={metadata}
         search={search}
-        onViewChange={(view) => change("view", view)}
+        onViewChange={(view) => change({ view })}
       />
       <FeaturedReplays data={data} metadata={metadata} search={search} />
       <ErrorDistribution data={data} />

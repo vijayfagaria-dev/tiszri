@@ -4,7 +4,12 @@ import { RefreshCw } from "lucide-react";
 import type { Metadata } from "../api/schemas";
 import { useAnalysis } from "../api/queries";
 import { apiParams, canonicalParams } from "./url";
-import { DecisionTimePicker, ErrorPanel, Loading } from "../components/ui";
+import {
+  DecisionTimePicker,
+  ErrorPanel,
+  HowItsCalculated,
+  Loading,
+} from "../components/ui";
 import { Overview } from "../features/overview/Overview";
 import { Replay } from "../features/replay/Replay";
 import { ReplayControls } from "../features/replay/ReplayControls";
@@ -53,7 +58,19 @@ export function AnalysisPage({
           />
         </div>
       )}
-      {query.isPending && <Loading />}
+      {query.isPending && !inputError && <Loading />}
+      {inputError &&
+        (result ? (
+          <p className="notice" role="alert">
+            {inputError.message} Showing the last valid result.
+          </p>
+        ) : (
+          <ErrorPanel
+            error={inputError}
+            retry={() => setSearch(new URLSearchParams(), { replace: true })}
+            retryLabel="Reset to the defaults"
+          />
+        ))}
       {query.isError && (
         <ErrorPanel
           key={query.error.message}
@@ -68,7 +85,7 @@ export function AnalysisPage({
           aria-busy={query.isFetching}
           className={query.isFetching ? "updating" : ""}
         >
-          {query.isPlaceholderData && (
+          {query.isPlaceholderData && !inputError && (
             <p className="notice" role="status">
               Updating selection. Previous evidence:{" "}
               {"deliveryDate" in result.response.query
@@ -111,6 +128,7 @@ export function AnalysisPage({
           )}
         </div>
       )}
+      <HowItsCalculated metadata={metadata} />
     </>
   );
 }

@@ -66,7 +66,7 @@ const notFound = () =>
       error: {
         code: "NOT_FOUND",
         message:
-          "Demo mode only has recorded examples for 5, 15, 16, 19 and 28 January. Connect the app to the API to explore any other day or decision time.",
+          "Demo mode only has recorded examples: the January summary and the days 5, 15, 16, 19 and 28 January. Connect the app to the API to explore other dates or decision times.",
         details: [],
         requestId: "demo-request",
         retryable: false,
