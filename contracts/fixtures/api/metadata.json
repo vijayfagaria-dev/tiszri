@@ -1,0 +1,133 @@
+{
+  "contractVersion": "1.0.0",
+  "algorithmVersion": "replay/1.0.0",
+  "businessTimezone": "Europe/London",
+  "supportedDeliveryWindow": {
+    "from": "2026-01-01",
+    "to": "2026-02-01"
+  },
+  "summaryDefaults": {
+    "from": "2026-01-02",
+    "to": "2026-02-01",
+    "rule": {
+      "dayOffset": -1,
+      "localTime": "09:00"
+    }
+  },
+  "cutoff": {
+    "defaultRule": {
+      "dayOffset": -1,
+      "localTime": "09:00"
+    },
+    "range": {
+      "minDayOffset": -7,
+      "maxDayOffset": 2,
+      "maxLocalTimeAtMaxOffset": "00:00"
+    },
+    "presets": [
+      {
+        "id": "TWO_DAYS_BEFORE_0900",
+        "rule": {
+          "dayOffset": -2,
+          "localTime": "09:00"
+        },
+        "isDefault": false
+      },
+      {
+        "id": "MORNING_BEFORE_0900",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "09:00"
+        },
+        "isDefault": true
+      },
+      {
+        "id": "NOON_BEFORE_1200",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "isDefault": false
+      },
+      {
+        "id": "DELIVERY_START_0000",
+        "rule": {
+          "dayOffset": 0,
+          "localTime": "00:00"
+        },
+        "isDefault": false
+      },
+      {
+        "id": "AFTER_DELIVERY_0000",
+        "rule": {
+          "dayOffset": 1,
+          "localTime": "00:00"
+        },
+        "isDefault": false
+      }
+    ]
+  },
+  "datasets": [
+    {
+      "id": "FUELHH",
+      "role": "ACTUAL",
+      "filter": {
+        "fuelType": "WIND"
+      },
+      "resolutionMinutes": 30,
+      "unit": {
+        "unit": "MW",
+        "meaning": "Average over the 30-minute settlement period",
+        "status": "VERIFIED",
+        "evidence": "Elexon Insights FUELHH description"
+      }
+    },
+    {
+      "id": "WINDFOR",
+      "role": "FORECAST",
+      "filter": null,
+      "resolutionMinutes": 60,
+      "unit": {
+        "unit": "MW",
+        "meaning": "Hourly forecast value; averaging semantics undocumented",
+        "status": "VERIFIED",
+        "evidence": "Product-owner approval; NETA IDD"
+      }
+    }
+  ],
+  "policies": {
+    "selection": {
+      "id": "LATEST_ELIGIBLE_INCLUSIVE",
+      "text": "For each hour, only forecasts published at or before the decision time are eligible; the one with the latest publish time is used."
+    },
+    "mapping": {
+      "id": "HOURLY_FORECAST_APPLIED_TO_BOTH_SETTLEMENT_PERIODS",
+      "text": "Each hourly forecast applies to both settlement periods of its hour."
+    },
+    "duplicates": {
+      "id": "EQUIVALENT_COLLAPSE_CONFLICT_EXCLUDE",
+      "text": "Records sharing the latest publish time count once if their values agree and are excluded if they differ. An older forecast is never used as a fallback."
+    },
+    "percentiles": {
+      "id": "NEAREST_RANK",
+      "text": "The p-th percentile is the value at rank ceil(p * n) of the sorted values."
+    }
+  },
+  "metricDefinitions": [
+    {
+      "id": "MAE",
+      "formula": "(1/n) * sum(|F - A|)",
+      "description": "Average size of the error, ignoring direction."
+    },
+    {
+      "id": "RMSE",
+      "formula": "sqrt((1/n) * sum((F - A)^2))",
+      "description": "Like MAE, but gives large misses more weight."
+    },
+    {
+      "id": "BIAS",
+      "formula": "(1/n) * sum(F - A)",
+      "description": "Average signed error. Positive means over-forecasting. Errors of opposite sign cancel, so read it alongside MAE."
+    }
+  ]
+}

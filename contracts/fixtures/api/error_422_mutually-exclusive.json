@@ -1,0 +1,15 @@
+{
+  "error": {
+    "code": "INVALID_PARAMETER",
+    "message": "Send either decisionCutoff or cutoffDayOffset with cutoffLocalTime, not both.",
+    "details": [
+      {
+        "field": "decisionCutoff",
+        "reason": "MUTUALLY_EXCLUSIVE",
+        "message": "Send either decisionCutoff or cutoffDayOffset with cutoffLocalTime, not both."
+      }
+    ],
+    "requestId": "fixture-error-422-mutually-exclusive",
+    "retryable": false
+  }
+}

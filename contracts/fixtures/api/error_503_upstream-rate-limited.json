@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "UPSTREAM_RATE_LIMITED",
+    "message": "The Elexon data service is busy.",
+    "details": [],
+    "requestId": "fixture-error-503-upstream-rate-limited",
+    "retryable": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "error": {
+    "code": "INVALID_DELIVERY_DATE",
+    "message": "Choose a date between 1 Jan 2026 and 1 Feb 2026.",
+    "details": [
+      {
+        "field": "deliveryDate",
+        "reason": "OUT_OF_RANGE",
+        "message": "Choose a date between 1 Jan 2026 and 1 Feb 2026."
+      }
+    ],
+    "requestId": "fixture-error-422-date-out-of-range",
+    "retryable": false
+  }
+}

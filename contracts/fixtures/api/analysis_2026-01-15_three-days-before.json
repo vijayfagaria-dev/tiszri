@@ -1,0 +1,1208 @@
+{
+  "resultState": "EMPTY",
+  "query": {
+    "deliveryDate": "2026-01-15",
+    "decisionCutoff": {
+      "utc": "2026-01-12T09:00:00Z",
+      "london": "2026-01-12T09:00:00+00:00",
+      "source": "RULE",
+      "rule": {
+        "dayOffset": -3,
+        "localTime": "09:00"
+      },
+      "presetId": null,
+      "position": "BEFORE_DELIVERY"
+    },
+    "businessTimezone": "Europe/London"
+  },
+  "metadata": {
+    "contractVersion": "1.0.0",
+    "algorithmVersion": "replay/1.0.0",
+    "requestId": "fixture-analysis-2026-01-15-three-days-before",
+    "generatedAt": "2026-10-24T17:46:46Z",
+    "sources": [
+      {
+        "dataset": "FUELHH",
+        "role": "ACTUAL",
+        "filter": {
+          "fuelType": "WIND"
+        },
+        "requestedRange": {
+          "from": "2026-01-15",
+          "to": "2026-01-15",
+          "basis": "SETTLEMENT_DATE"
+        },
+        "rowsReceived": 48,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": null
+      },
+      {
+        "dataset": "WINDFOR",
+        "role": "FORECAST",
+        "filter": null,
+        "requestedRange": {
+          "from": "2026-01-11T00:00:00Z",
+          "to": "2026-01-17T00:00:00Z",
+          "basis": "PUBLISH_TIME"
+        },
+        "rowsReceived": 3504,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": {
+          "coveringDay": 32,
+          "eligible": 0,
+          "afterCutoff": 32
+        }
+      }
+    ],
+    "unit": {
+      "label": "MW",
+      "actual": {
+        "unit": "MW",
+        "meaning": "Average over the 30-minute settlement period",
+        "status": "VERIFIED",
+        "evidence": "Elexon Insights FUELHH description"
+      },
+      "forecast": {
+        "unit": "MW",
+        "meaning": "Hourly forecast value; averaging semantics undocumented",
+        "status": "VERIFIED",
+        "evidence": "Product-owner approval; NETA IDD"
+      }
+    },
+    "resolution": {
+      "deliveryMinutes": 30,
+      "forecastMinutes": 60
+    },
+    "policyIds": {
+      "selection": "LATEST_ELIGIBLE_INCLUSIVE",
+      "mapping": "HOURLY_FORECAST_APPLIED_TO_BOTH_SETTLEMENT_PERIODS",
+      "duplicates": "EQUIVALENT_COLLAPSE_CONFLICT_EXCLUDE"
+    },
+    "counts": {
+      "expected": 48,
+      "matched": 0,
+      "excluded": 48,
+      "byStatus": {
+        "MATCHED": 0,
+        "FORECAST_NOT_YET_PUBLISHED": 48,
+        "FORECAST_MISSING": 0,
+        "ACTUAL_MISSING": 0,
+        "FULLY_MISSING": 0,
+        "INVALID_VALUE": 0,
+        "AMBIGUOUS_FORECAST": 0,
+        "AMBIGUOUS_ACTUAL": 0
+      }
+    },
+    "coverage": 0.0
+  },
+  "metrics": {
+    "n": 0,
+    "mae": null,
+    "rmse": null,
+    "bias": null,
+    "directionCounts": {
+      "over": 0,
+      "under": 0,
+      "exact": 0
+    },
+    "signConvention": "FORECAST_MINUS_ACTUAL",
+    "qualified": true,
+    "unavailableReason": "NO_MATCHED_INTERVALS"
+  },
+  "highlights": {
+    "largestOver": null,
+    "largestUnder": null,
+    "versionsUsed": [],
+    "earliestCoveringPublishTime": "2026-01-13T02:30:00Z",
+    "newerVersionAfterCutoff": "2026-01-13T02:30:00Z"
+  },
+  "intervals": [
+    {
+      "settlementPeriod": 1,
+      "startTime": "2026-01-15T00:00:00Z",
+      "endTime": "2026-01-15T00:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14602,
+        "publishTime": "2026-01-15T00:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 2,
+      "startTime": "2026-01-15T00:30:00Z",
+      "endTime": "2026-01-15T01:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14311,
+        "publishTime": "2026-01-15T01:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 3,
+      "startTime": "2026-01-15T01:00:00Z",
+      "endTime": "2026-01-15T01:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14200,
+        "publishTime": "2026-01-15T01:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 4,
+      "startTime": "2026-01-15T01:30:00Z",
+      "endTime": "2026-01-15T02:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14516,
+        "publishTime": "2026-01-15T02:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 5,
+      "startTime": "2026-01-15T02:00:00Z",
+      "endTime": "2026-01-15T02:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14534,
+        "publishTime": "2026-01-15T02:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 6,
+      "startTime": "2026-01-15T02:30:00Z",
+      "endTime": "2026-01-15T03:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14202,
+        "publishTime": "2026-01-15T03:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 7,
+      "startTime": "2026-01-15T03:00:00Z",
+      "endTime": "2026-01-15T03:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14028,
+        "publishTime": "2026-01-15T03:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 8,
+      "startTime": "2026-01-15T03:30:00Z",
+      "endTime": "2026-01-15T04:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14250,
+        "publishTime": "2026-01-15T04:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 9,
+      "startTime": "2026-01-15T04:00:00Z",
+      "endTime": "2026-01-15T04:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13901,
+        "publishTime": "2026-01-15T04:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 10,
+      "startTime": "2026-01-15T04:30:00Z",
+      "endTime": "2026-01-15T05:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13713,
+        "publishTime": "2026-01-15T05:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 11,
+      "startTime": "2026-01-15T05:00:00Z",
+      "endTime": "2026-01-15T05:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13704,
+        "publishTime": "2026-01-15T05:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 12,
+      "startTime": "2026-01-15T05:30:00Z",
+      "endTime": "2026-01-15T06:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13389,
+        "publishTime": "2026-01-15T06:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 13,
+      "startTime": "2026-01-15T06:00:00Z",
+      "endTime": "2026-01-15T06:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13256,
+        "publishTime": "2026-01-15T06:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 14,
+      "startTime": "2026-01-15T06:30:00Z",
+      "endTime": "2026-01-15T07:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13518,
+        "publishTime": "2026-01-15T07:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 15,
+      "startTime": "2026-01-15T07:00:00Z",
+      "endTime": "2026-01-15T07:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13401,
+        "publishTime": "2026-01-15T07:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 16,
+      "startTime": "2026-01-15T07:30:00Z",
+      "endTime": "2026-01-15T08:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12937,
+        "publishTime": "2026-01-15T08:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 17,
+      "startTime": "2026-01-15T08:00:00Z",
+      "endTime": "2026-01-15T08:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12719,
+        "publishTime": "2026-01-15T08:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 18,
+      "startTime": "2026-01-15T08:30:00Z",
+      "endTime": "2026-01-15T09:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12302,
+        "publishTime": "2026-01-15T09:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 19,
+      "startTime": "2026-01-15T09:00:00Z",
+      "endTime": "2026-01-15T09:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12242,
+        "publishTime": "2026-01-15T09:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 20,
+      "startTime": "2026-01-15T09:30:00Z",
+      "endTime": "2026-01-15T10:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12144,
+        "publishTime": "2026-01-15T10:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 21,
+      "startTime": "2026-01-15T10:00:00Z",
+      "endTime": "2026-01-15T10:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9807,
+        "publishTime": "2026-01-15T12:25:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 22,
+      "startTime": "2026-01-15T10:30:00Z",
+      "endTime": "2026-01-15T11:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 11303,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 23,
+      "startTime": "2026-01-15T11:00:00Z",
+      "endTime": "2026-01-15T11:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9930,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 24,
+      "startTime": "2026-01-15T11:30:00Z",
+      "endTime": "2026-01-15T12:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9601,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 25,
+      "startTime": "2026-01-15T12:00:00Z",
+      "endTime": "2026-01-15T12:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9742,
+        "publishTime": "2026-01-15T12:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 26,
+      "startTime": "2026-01-15T12:30:00Z",
+      "endTime": "2026-01-15T13:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9839,
+        "publishTime": "2026-01-15T13:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 27,
+      "startTime": "2026-01-15T13:00:00Z",
+      "endTime": "2026-01-15T13:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8843,
+        "publishTime": "2026-01-15T13:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 28,
+      "startTime": "2026-01-15T13:30:00Z",
+      "endTime": "2026-01-15T14:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8771,
+        "publishTime": "2026-01-15T14:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 29,
+      "startTime": "2026-01-15T14:00:00Z",
+      "endTime": "2026-01-15T14:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8384,
+        "publishTime": "2026-01-15T14:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 30,
+      "startTime": "2026-01-15T14:30:00Z",
+      "endTime": "2026-01-15T15:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8264,
+        "publishTime": "2026-01-15T15:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 31,
+      "startTime": "2026-01-15T15:00:00Z",
+      "endTime": "2026-01-15T15:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8482,
+        "publishTime": "2026-01-15T15:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 32,
+      "startTime": "2026-01-15T15:30:00Z",
+      "endTime": "2026-01-15T16:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8608,
+        "publishTime": "2026-01-15T16:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 33,
+      "startTime": "2026-01-15T16:00:00Z",
+      "endTime": "2026-01-15T16:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8543,
+        "publishTime": "2026-01-15T16:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 34,
+      "startTime": "2026-01-15T16:30:00Z",
+      "endTime": "2026-01-15T17:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8378,
+        "publishTime": "2026-01-15T17:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 35,
+      "startTime": "2026-01-15T17:00:00Z",
+      "endTime": "2026-01-15T17:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8266,
+        "publishTime": "2026-01-15T17:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 36,
+      "startTime": "2026-01-15T17:30:00Z",
+      "endTime": "2026-01-15T18:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8004,
+        "publishTime": "2026-01-15T18:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 37,
+      "startTime": "2026-01-15T18:00:00Z",
+      "endTime": "2026-01-15T18:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7672,
+        "publishTime": "2026-01-15T18:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 38,
+      "startTime": "2026-01-15T18:30:00Z",
+      "endTime": "2026-01-15T19:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7593,
+        "publishTime": "2026-01-15T19:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 39,
+      "startTime": "2026-01-15T19:00:00Z",
+      "endTime": "2026-01-15T19:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7631,
+        "publishTime": "2026-01-15T19:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 40,
+      "startTime": "2026-01-15T19:30:00Z",
+      "endTime": "2026-01-15T20:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7599,
+        "publishTime": "2026-01-15T20:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 41,
+      "startTime": "2026-01-15T20:00:00Z",
+      "endTime": "2026-01-15T20:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7592,
+        "publishTime": "2026-01-15T20:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 42,
+      "startTime": "2026-01-15T20:30:00Z",
+      "endTime": "2026-01-15T21:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7183,
+        "publishTime": "2026-01-15T21:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 43,
+      "startTime": "2026-01-15T21:00:00Z",
+      "endTime": "2026-01-15T21:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 32,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7603,
+        "publishTime": "2026-01-15T21:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 44,
+      "startTime": "2026-01-15T21:30:00Z",
+      "endTime": "2026-01-15T22:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 32,
+        "earliestLaterPublishTime": "2026-01-13T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7964,
+        "publishTime": "2026-01-15T22:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 45,
+      "startTime": "2026-01-15T22:00:00Z",
+      "endTime": "2026-01-15T22:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7685,
+        "publishTime": "2026-01-15T22:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 46,
+      "startTime": "2026-01-15T22:30:00Z",
+      "endTime": "2026-01-15T23:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7431,
+        "publishTime": "2026-01-15T23:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 47,
+      "startTime": "2026-01-15T23:00:00Z",
+      "endTime": "2026-01-15T23:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7258,
+        "publishTime": "2026-01-15T23:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 48,
+      "startTime": "2026-01-15T23:30:00Z",
+      "endTime": "2026-01-16T00:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7407,
+        "publishTime": "2026-01-16T00:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    }
+  ],
+  "warnings": [
+    {
+      "code": "NO_MATCHED_INTERVALS",
+      "severity": "WARNING",
+      "scope": "ANALYSIS",
+      "message": "No settlement period has both a forecast available at the decision time and an actual value, so accuracy metrics are unavailable.",
+      "affectedCount": 48,
+      "affectedIntervals": [
+        "2026-01-15T00:00:00Z",
+        "2026-01-15T00:30:00Z",
+        "2026-01-15T01:00:00Z",
+        "2026-01-15T01:30:00Z",
+        "2026-01-15T02:00:00Z",
+        "2026-01-15T02:30:00Z",
+        "2026-01-15T03:00:00Z",
+        "2026-01-15T03:30:00Z",
+        "2026-01-15T04:00:00Z",
+        "2026-01-15T04:30:00Z",
+        "2026-01-15T05:00:00Z",
+        "2026-01-15T05:30:00Z",
+        "2026-01-15T06:00:00Z",
+        "2026-01-15T06:30:00Z",
+        "2026-01-15T07:00:00Z",
+        "2026-01-15T07:30:00Z",
+        "2026-01-15T08:00:00Z",
+        "2026-01-15T08:30:00Z",
+        "2026-01-15T09:00:00Z",
+        "2026-01-15T09:30:00Z",
+        "2026-01-15T10:00:00Z",
+        "2026-01-15T10:30:00Z",
+        "2026-01-15T11:00:00Z",
+        "2026-01-15T11:30:00Z",
+        "2026-01-15T12:00:00Z",
+        "2026-01-15T12:30:00Z",
+        "2026-01-15T13:00:00Z",
+        "2026-01-15T13:30:00Z",
+        "2026-01-15T14:00:00Z",
+        "2026-01-15T14:30:00Z",
+        "2026-01-15T15:00:00Z",
+        "2026-01-15T15:30:00Z",
+        "2026-01-15T16:00:00Z",
+        "2026-01-15T16:30:00Z",
+        "2026-01-15T17:00:00Z",
+        "2026-01-15T17:30:00Z",
+        "2026-01-15T18:00:00Z",
+        "2026-01-15T18:30:00Z",
+        "2026-01-15T19:00:00Z",
+        "2026-01-15T19:30:00Z",
+        "2026-01-15T20:00:00Z",
+        "2026-01-15T20:30:00Z",
+        "2026-01-15T21:00:00Z",
+        "2026-01-15T21:30:00Z",
+        "2026-01-15T22:00:00Z",
+        "2026-01-15T22:30:00Z",
+        "2026-01-15T23:00:00Z",
+        "2026-01-15T23:30:00Z"
+      ],
+      "data": {
+        "expected": 48
+      }
+    },
+    {
+      "code": "NEWER_VERSION_AFTER_CUTOFF",
+      "severity": "INFO",
+      "scope": "SOURCE",
+      "message": "A WINDFOR forecast covering this day was published at 02:30 GMT on 13 Jan, after the decision time; it was not used.",
+      "affectedCount": 0,
+      "affectedIntervals": [],
+      "data": {
+        "publishTime": "2026-01-13T02:30:00Z"
+      }
+    }
+  ]
+}

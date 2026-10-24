@@ -1,0 +1,1651 @@
+{
+  "resultState": "PARTIAL",
+  "query": {
+    "deliveryDate": "2026-01-15",
+    "decisionCutoff": {
+      "utc": "2026-01-13T09:00:00Z",
+      "london": "2026-01-13T09:00:00+00:00",
+      "source": "RULE",
+      "rule": {
+        "dayOffset": -2,
+        "localTime": "09:00"
+      },
+      "presetId": "TWO_DAYS_BEFORE_0900",
+      "position": "BEFORE_DELIVERY"
+    },
+    "businessTimezone": "Europe/London"
+  },
+  "metadata": {
+    "contractVersion": "1.0.0",
+    "algorithmVersion": "replay/1.0.0",
+    "requestId": "fixture-analysis-2026-01-15-two-days-before",
+    "generatedAt": "2026-10-24T17:46:46Z",
+    "sources": [
+      {
+        "dataset": "FUELHH",
+        "role": "ACTUAL",
+        "filter": {
+          "fuelType": "WIND"
+        },
+        "requestedRange": {
+          "from": "2026-01-15",
+          "to": "2026-01-15",
+          "basis": "SETTLEMENT_DATE"
+        },
+        "rowsReceived": 48,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": null
+      },
+      {
+        "dataset": "WINDFOR",
+        "role": "FORECAST",
+        "filter": null,
+        "requestedRange": {
+          "from": "2026-01-11T00:00:00Z",
+          "to": "2026-01-17T00:00:00Z",
+          "basis": "PUBLISH_TIME"
+        },
+        "rowsReceived": 3504,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": {
+          "coveringDay": 32,
+          "eligible": 3,
+          "afterCutoff": 29
+        }
+      }
+    ],
+    "unit": {
+      "label": "MW",
+      "actual": {
+        "unit": "MW",
+        "meaning": "Average over the 30-minute settlement period",
+        "status": "VERIFIED",
+        "evidence": "Elexon Insights FUELHH description"
+      },
+      "forecast": {
+        "unit": "MW",
+        "meaning": "Hourly forecast value; averaging semantics undocumented",
+        "status": "VERIFIED",
+        "evidence": "Product-owner approval; NETA IDD"
+      }
+    },
+    "resolution": {
+      "deliveryMinutes": 30,
+      "forecastMinutes": 60
+    },
+    "policyIds": {
+      "selection": "LATEST_ELIGIBLE_INCLUSIVE",
+      "mapping": "HOURLY_FORECAST_APPLIED_TO_BOTH_SETTLEMENT_PERIODS",
+      "duplicates": "EQUIVALENT_COLLAPSE_CONFLICT_EXCLUDE"
+    },
+    "counts": {
+      "expected": 48,
+      "matched": 44,
+      "excluded": 4,
+      "byStatus": {
+        "MATCHED": 44,
+        "FORECAST_NOT_YET_PUBLISHED": 4,
+        "FORECAST_MISSING": 0,
+        "ACTUAL_MISSING": 0,
+        "FULLY_MISSING": 0,
+        "INVALID_VALUE": 0,
+        "AMBIGUOUS_FORECAST": 0,
+        "AMBIGUOUS_ACTUAL": 0
+      }
+    },
+    "coverage": 0.9166666666666666
+  },
+  "metrics": {
+    "n": 44,
+    "mae": 1340.5681818181818,
+    "rmse": 1727.0690029379518,
+    "bias": 1304.0681818181818,
+    "directionCounts": {
+      "over": 40,
+      "under": 4,
+      "exact": 0
+    },
+    "signConvention": "FORECAST_MINUS_ACTUAL",
+    "qualified": true,
+    "unavailableReason": null
+  },
+  "highlights": {
+    "largestOver": "2026-01-15T20:30:00Z",
+    "largestUnder": "2026-01-15T02:00:00Z",
+    "versionsUsed": [
+      "2026-01-13T07:30:00Z"
+    ],
+    "earliestCoveringPublishTime": "2026-01-13T02:30:00Z",
+    "newerVersionAfterCutoff": "2026-01-13T09:30:00Z"
+  },
+  "intervals": [
+    {
+      "settlementPeriod": 1,
+      "startTime": "2026-01-15T00:00:00Z",
+      "endTime": "2026-01-15T00:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14671,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T00:00:00Z",
+        "periodEnd": "2026-01-15T01:00:00Z",
+        "leadMinutes": 2430,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14602,
+        "publishTime": "2026-01-15T00:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 69,
+        "absolute": 69,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 2,
+      "startTime": "2026-01-15T00:30:00Z",
+      "endTime": "2026-01-15T01:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14671,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T00:00:00Z",
+        "periodEnd": "2026-01-15T01:00:00Z",
+        "leadMinutes": 2460,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14311,
+        "publishTime": "2026-01-15T01:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 360,
+        "absolute": 360,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 3,
+      "startTime": "2026-01-15T01:00:00Z",
+      "endTime": "2026-01-15T01:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14566,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T01:00:00Z",
+        "periodEnd": "2026-01-15T02:00:00Z",
+        "leadMinutes": 2490,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14200,
+        "publishTime": "2026-01-15T01:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 366,
+        "absolute": 366,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 4,
+      "startTime": "2026-01-15T01:30:00Z",
+      "endTime": "2026-01-15T02:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14566,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T01:00:00Z",
+        "periodEnd": "2026-01-15T02:00:00Z",
+        "leadMinutes": 2520,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14516,
+        "publishTime": "2026-01-15T02:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 50,
+        "absolute": 50,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 5,
+      "startTime": "2026-01-15T02:00:00Z",
+      "endTime": "2026-01-15T02:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14248,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T02:00:00Z",
+        "periodEnd": "2026-01-15T03:00:00Z",
+        "leadMinutes": 2550,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14534,
+        "publishTime": "2026-01-15T02:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": -286,
+        "absolute": 286,
+        "direction": "UNDER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 6,
+      "startTime": "2026-01-15T02:30:00Z",
+      "endTime": "2026-01-15T03:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14248,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T02:00:00Z",
+        "periodEnd": "2026-01-15T03:00:00Z",
+        "leadMinutes": 2580,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14202,
+        "publishTime": "2026-01-15T03:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 46,
+        "absolute": 46,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 7,
+      "startTime": "2026-01-15T03:00:00Z",
+      "endTime": "2026-01-15T03:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14014,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T03:00:00Z",
+        "periodEnd": "2026-01-15T04:00:00Z",
+        "leadMinutes": 2610,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14028,
+        "publishTime": "2026-01-15T03:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": -14,
+        "absolute": 14,
+        "direction": "UNDER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 8,
+      "startTime": "2026-01-15T03:30:00Z",
+      "endTime": "2026-01-15T04:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 14014,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T03:00:00Z",
+        "periodEnd": "2026-01-15T04:00:00Z",
+        "leadMinutes": 2640,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 14250,
+        "publishTime": "2026-01-15T04:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": -236,
+        "absolute": 236,
+        "direction": "UNDER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 9,
+      "startTime": "2026-01-15T04:00:00Z",
+      "endTime": "2026-01-15T04:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13926,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T04:00:00Z",
+        "periodEnd": "2026-01-15T05:00:00Z",
+        "leadMinutes": 2670,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13901,
+        "publishTime": "2026-01-15T04:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 25,
+        "absolute": 25,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 10,
+      "startTime": "2026-01-15T04:30:00Z",
+      "endTime": "2026-01-15T05:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13926,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T04:00:00Z",
+        "periodEnd": "2026-01-15T05:00:00Z",
+        "leadMinutes": 2700,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13713,
+        "publishTime": "2026-01-15T05:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 213,
+        "absolute": 213,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 11,
+      "startTime": "2026-01-15T05:00:00Z",
+      "endTime": "2026-01-15T05:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13793,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T05:00:00Z",
+        "periodEnd": "2026-01-15T06:00:00Z",
+        "leadMinutes": 2730,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13704,
+        "publishTime": "2026-01-15T05:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 89,
+        "absolute": 89,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 12,
+      "startTime": "2026-01-15T05:30:00Z",
+      "endTime": "2026-01-15T06:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13793,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T05:00:00Z",
+        "periodEnd": "2026-01-15T06:00:00Z",
+        "leadMinutes": 2760,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13389,
+        "publishTime": "2026-01-15T06:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 404,
+        "absolute": 404,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 13,
+      "startTime": "2026-01-15T06:00:00Z",
+      "endTime": "2026-01-15T06:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13603,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T06:00:00Z",
+        "periodEnd": "2026-01-15T07:00:00Z",
+        "leadMinutes": 2790,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13256,
+        "publishTime": "2026-01-15T06:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 347,
+        "absolute": 347,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 14,
+      "startTime": "2026-01-15T06:30:00Z",
+      "endTime": "2026-01-15T07:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13603,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T06:00:00Z",
+        "periodEnd": "2026-01-15T07:00:00Z",
+        "leadMinutes": 2820,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13518,
+        "publishTime": "2026-01-15T07:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 85,
+        "absolute": 85,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 15,
+      "startTime": "2026-01-15T07:00:00Z",
+      "endTime": "2026-01-15T07:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13134,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T07:00:00Z",
+        "periodEnd": "2026-01-15T08:00:00Z",
+        "leadMinutes": 2850,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 13401,
+        "publishTime": "2026-01-15T07:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": -267,
+        "absolute": 267,
+        "direction": "UNDER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 16,
+      "startTime": "2026-01-15T07:30:00Z",
+      "endTime": "2026-01-15T08:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 13134,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T07:00:00Z",
+        "periodEnd": "2026-01-15T08:00:00Z",
+        "leadMinutes": 2880,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12937,
+        "publishTime": "2026-01-15T08:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 197,
+        "absolute": 197,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 17,
+      "startTime": "2026-01-15T08:00:00Z",
+      "endTime": "2026-01-15T08:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12805,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T08:00:00Z",
+        "periodEnd": "2026-01-15T09:00:00Z",
+        "leadMinutes": 2910,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12719,
+        "publishTime": "2026-01-15T08:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 86,
+        "absolute": 86,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 18,
+      "startTime": "2026-01-15T08:30:00Z",
+      "endTime": "2026-01-15T09:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12805,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T08:00:00Z",
+        "periodEnd": "2026-01-15T09:00:00Z",
+        "leadMinutes": 2940,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12302,
+        "publishTime": "2026-01-15T09:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 503,
+        "absolute": 503,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 19,
+      "startTime": "2026-01-15T09:00:00Z",
+      "endTime": "2026-01-15T09:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12586,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T09:00:00Z",
+        "periodEnd": "2026-01-15T10:00:00Z",
+        "leadMinutes": 2970,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12242,
+        "publishTime": "2026-01-15T09:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 344,
+        "absolute": 344,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 20,
+      "startTime": "2026-01-15T09:30:00Z",
+      "endTime": "2026-01-15T10:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12586,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T09:00:00Z",
+        "periodEnd": "2026-01-15T10:00:00Z",
+        "leadMinutes": 3000,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 12144,
+        "publishTime": "2026-01-15T10:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 442,
+        "absolute": 442,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 21,
+      "startTime": "2026-01-15T10:00:00Z",
+      "endTime": "2026-01-15T10:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12388,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T10:00:00Z",
+        "periodEnd": "2026-01-15T11:00:00Z",
+        "leadMinutes": 3030,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9807,
+        "publishTime": "2026-01-15T12:25:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2581,
+        "absolute": 2581,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 22,
+      "startTime": "2026-01-15T10:30:00Z",
+      "endTime": "2026-01-15T11:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12388,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T10:00:00Z",
+        "periodEnd": "2026-01-15T11:00:00Z",
+        "leadMinutes": 3060,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 11303,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1085,
+        "absolute": 1085,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 23,
+      "startTime": "2026-01-15T11:00:00Z",
+      "endTime": "2026-01-15T11:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12049,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T11:00:00Z",
+        "periodEnd": "2026-01-15T12:00:00Z",
+        "leadMinutes": 3090,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9930,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2119,
+        "absolute": 2119,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 24,
+      "startTime": "2026-01-15T11:30:00Z",
+      "endTime": "2026-01-15T12:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 12049,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T11:00:00Z",
+        "periodEnd": "2026-01-15T12:00:00Z",
+        "leadMinutes": 3120,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9601,
+        "publishTime": "2026-01-15T12:26:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2448,
+        "absolute": 2448,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 25,
+      "startTime": "2026-01-15T12:00:00Z",
+      "endTime": "2026-01-15T12:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 11562,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T12:00:00Z",
+        "periodEnd": "2026-01-15T13:00:00Z",
+        "leadMinutes": 3150,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9742,
+        "publishTime": "2026-01-15T12:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1820,
+        "absolute": 1820,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 26,
+      "startTime": "2026-01-15T12:30:00Z",
+      "endTime": "2026-01-15T13:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 11562,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T12:00:00Z",
+        "periodEnd": "2026-01-15T13:00:00Z",
+        "leadMinutes": 3180,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 9839,
+        "publishTime": "2026-01-15T13:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1723,
+        "absolute": 1723,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 27,
+      "startTime": "2026-01-15T13:00:00Z",
+      "endTime": "2026-01-15T13:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10988,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T13:00:00Z",
+        "periodEnd": "2026-01-15T14:00:00Z",
+        "leadMinutes": 3210,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8843,
+        "publishTime": "2026-01-15T13:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2145,
+        "absolute": 2145,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 28,
+      "startTime": "2026-01-15T13:30:00Z",
+      "endTime": "2026-01-15T14:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10988,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T13:00:00Z",
+        "periodEnd": "2026-01-15T14:00:00Z",
+        "leadMinutes": 3240,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8771,
+        "publishTime": "2026-01-15T14:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2217,
+        "absolute": 2217,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 29,
+      "startTime": "2026-01-15T14:00:00Z",
+      "endTime": "2026-01-15T14:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10471,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T14:00:00Z",
+        "periodEnd": "2026-01-15T15:00:00Z",
+        "leadMinutes": 3270,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8384,
+        "publishTime": "2026-01-15T14:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2087,
+        "absolute": 2087,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 30,
+      "startTime": "2026-01-15T14:30:00Z",
+      "endTime": "2026-01-15T15:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10471,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T14:00:00Z",
+        "periodEnd": "2026-01-15T15:00:00Z",
+        "leadMinutes": 3300,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8264,
+        "publishTime": "2026-01-15T15:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2207,
+        "absolute": 2207,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 31,
+      "startTime": "2026-01-15T15:00:00Z",
+      "endTime": "2026-01-15T15:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10264,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T15:00:00Z",
+        "periodEnd": "2026-01-15T16:00:00Z",
+        "leadMinutes": 3330,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8482,
+        "publishTime": "2026-01-15T15:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1782,
+        "absolute": 1782,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 32,
+      "startTime": "2026-01-15T15:30:00Z",
+      "endTime": "2026-01-15T16:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10264,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T15:00:00Z",
+        "periodEnd": "2026-01-15T16:00:00Z",
+        "leadMinutes": 3360,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8608,
+        "publishTime": "2026-01-15T16:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1656,
+        "absolute": 1656,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 33,
+      "startTime": "2026-01-15T16:00:00Z",
+      "endTime": "2026-01-15T16:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10331,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T16:00:00Z",
+        "periodEnd": "2026-01-15T17:00:00Z",
+        "leadMinutes": 3390,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8543,
+        "publishTime": "2026-01-15T16:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1788,
+        "absolute": 1788,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 34,
+      "startTime": "2026-01-15T16:30:00Z",
+      "endTime": "2026-01-15T17:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10331,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T16:00:00Z",
+        "periodEnd": "2026-01-15T17:00:00Z",
+        "leadMinutes": 3420,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8378,
+        "publishTime": "2026-01-15T17:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 1953,
+        "absolute": 1953,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 35,
+      "startTime": "2026-01-15T17:00:00Z",
+      "endTime": "2026-01-15T17:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10442,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T17:00:00Z",
+        "periodEnd": "2026-01-15T18:00:00Z",
+        "leadMinutes": 3450,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8266,
+        "publishTime": "2026-01-15T17:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2176,
+        "absolute": 2176,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 36,
+      "startTime": "2026-01-15T17:30:00Z",
+      "endTime": "2026-01-15T18:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10442,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T17:00:00Z",
+        "periodEnd": "2026-01-15T18:00:00Z",
+        "leadMinutes": 3480,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 8004,
+        "publishTime": "2026-01-15T18:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2438,
+        "absolute": 2438,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 37,
+      "startTime": "2026-01-15T18:00:00Z",
+      "endTime": "2026-01-15T18:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10470,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T18:00:00Z",
+        "periodEnd": "2026-01-15T19:00:00Z",
+        "leadMinutes": 3510,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7672,
+        "publishTime": "2026-01-15T18:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2798,
+        "absolute": 2798,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 38,
+      "startTime": "2026-01-15T18:30:00Z",
+      "endTime": "2026-01-15T19:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10470,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T18:00:00Z",
+        "periodEnd": "2026-01-15T19:00:00Z",
+        "leadMinutes": 3540,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7593,
+        "publishTime": "2026-01-15T19:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2877,
+        "absolute": 2877,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 39,
+      "startTime": "2026-01-15T19:00:00Z",
+      "endTime": "2026-01-15T19:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10494,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T19:00:00Z",
+        "periodEnd": "2026-01-15T20:00:00Z",
+        "leadMinutes": 3570,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7631,
+        "publishTime": "2026-01-15T19:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2863,
+        "absolute": 2863,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 40,
+      "startTime": "2026-01-15T19:30:00Z",
+      "endTime": "2026-01-15T20:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10494,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T19:00:00Z",
+        "periodEnd": "2026-01-15T20:00:00Z",
+        "leadMinutes": 3600,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7599,
+        "publishTime": "2026-01-15T20:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2895,
+        "absolute": 2895,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 41,
+      "startTime": "2026-01-15T20:00:00Z",
+      "endTime": "2026-01-15T20:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10397,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T20:00:00Z",
+        "periodEnd": "2026-01-15T21:00:00Z",
+        "leadMinutes": 3630,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7592,
+        "publishTime": "2026-01-15T20:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2805,
+        "absolute": 2805,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 42,
+      "startTime": "2026-01-15T20:30:00Z",
+      "endTime": "2026-01-15T21:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10397,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T20:00:00Z",
+        "periodEnd": "2026-01-15T21:00:00Z",
+        "leadMinutes": 3660,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 21,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7183,
+        "publishTime": "2026-01-15T21:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 3214,
+        "absolute": 3214,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 43,
+      "startTime": "2026-01-15T21:00:00Z",
+      "endTime": "2026-01-15T21:30:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10223,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T21:00:00Z",
+        "periodEnd": "2026-01-15T22:00:00Z",
+        "leadMinutes": 3690,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 29,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7603,
+        "publishTime": "2026-01-15T21:30:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2620,
+        "absolute": 2620,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 44,
+      "startTime": "2026-01-15T21:30:00Z",
+      "endTime": "2026-01-15T22:00:00Z",
+      "status": "MATCHED",
+      "exclusionReason": null,
+      "forecast": {
+        "generation": 10223,
+        "publishTime": "2026-01-13T07:30:00Z",
+        "periodStart": "2026-01-15T21:00:00Z",
+        "periodEnd": "2026-01-15T22:00:00Z",
+        "leadMinutes": 3720,
+        "ageAtCutoffMinutes": 90
+      },
+      "selection": {
+        "eligibleCount": 3,
+        "laterCount": 29,
+        "earliestLaterPublishTime": "2026-01-13T09:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7964,
+        "publishTime": "2026-01-15T22:00:00Z",
+        "conflictingValues": null
+      },
+      "error": {
+        "signed": 2259,
+        "absolute": 2259,
+        "direction": "OVER"
+      },
+      "flags": []
+    },
+    {
+      "settlementPeriod": 45,
+      "startTime": "2026-01-15T22:00:00Z",
+      "endTime": "2026-01-15T22:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7685,
+        "publishTime": "2026-01-15T22:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 46,
+      "startTime": "2026-01-15T22:30:00Z",
+      "endTime": "2026-01-15T23:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7431,
+        "publishTime": "2026-01-15T23:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 47,
+      "startTime": "2026-01-15T23:00:00Z",
+      "endTime": "2026-01-15T23:30:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7258,
+        "publishTime": "2026-01-15T23:30:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    },
+    {
+      "settlementPeriod": 48,
+      "startTime": "2026-01-15T23:30:00Z",
+      "endTime": "2026-01-16T00:00:00Z",
+      "status": "FORECAST_NOT_YET_PUBLISHED",
+      "exclusionReason": "No forecast for this hour existed at the decision time.",
+      "forecast": null,
+      "selection": {
+        "eligibleCount": 0,
+        "laterCount": 24,
+        "earliestLaterPublishTime": "2026-01-14T02:30:00Z",
+        "conflictingValues": null
+      },
+      "actual": {
+        "generation": 7407,
+        "publishTime": "2026-01-16T00:00:00Z",
+        "conflictingValues": null
+      },
+      "error": null,
+      "flags": []
+    }
+  ],
+  "warnings": [
+    {
+      "code": "PARTIAL_COVERAGE",
+      "severity": "WARNING",
+      "scope": "ANALYSIS",
+      "message": "44 of 48 settlement periods could be compared; metrics cover only those.",
+      "affectedCount": 4,
+      "affectedIntervals": [
+        "2026-01-15T22:00:00Z",
+        "2026-01-15T22:30:00Z",
+        "2026-01-15T23:00:00Z",
+        "2026-01-15T23:30:00Z"
+      ],
+      "data": {
+        "matched": 44,
+        "expected": 48
+      }
+    },
+    {
+      "code": "NEWER_VERSION_AFTER_CUTOFF",
+      "severity": "INFO",
+      "scope": "SOURCE",
+      "message": "A WINDFOR forecast covering this day was published at 09:30 GMT on 13 Jan, after the decision time; it was not used.",
+      "affectedCount": 0,
+      "affectedIntervals": [],
+      "data": {
+        "publishTime": "2026-01-13T09:30:00Z"
+      }
+    }
+  ]
+}

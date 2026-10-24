@@ -1,0 +1,239 @@
+[
+  {
+    "file": "metadata.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/metadata",
+      "params": {}
+    },
+    "source": "recorded",
+    "description": "Static configuration"
+  },
+  {
+    "file": "analysis_2026-01-16_default.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "recorded",
+    "description": "Default decision time (09:00 the day before): 07:30 forecast used"
+  },
+  {
+    "file": "analysis_2026-01-16_noon-before.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16",
+        "cutoffDayOffset": "-1",
+        "cutoffLocalTime": "12:00"
+      }
+    },
+    "source": "recorded",
+    "description": "Late 11:30 forecast (published 12:25): falls back to the 09:30 forecast"
+  },
+  {
+    "file": "analysis_2026-01-28_default.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-28"
+      }
+    },
+    "source": "recorded",
+    "description": "Worst day: too high in all 48 periods"
+  },
+  {
+    "file": "analysis_2026-01-19_default.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-19"
+      }
+    },
+    "source": "recorded",
+    "description": "Best day"
+  },
+  {
+    "file": "analysis_2026-01-05_default.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-05"
+      }
+    },
+    "source": "recorded",
+    "description": "Bias hides error: average error near zero, large misses both ways"
+  },
+  {
+    "file": "analysis_2026-01-15_two-days-before.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-15",
+        "cutoffDayOffset": "-2",
+        "cutoffLocalTime": "09:00"
+      }
+    },
+    "source": "recorded",
+    "description": "PARTIAL: 22:00-23:30 not yet forecast"
+  },
+  {
+    "file": "analysis_2026-01-15_three-days-before.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-15",
+        "cutoffDayOffset": "-3",
+        "cutoffLocalTime": "09:00"
+      }
+    },
+    "source": "recorded",
+    "description": "EMPTY: no forecast published yet"
+  },
+  {
+    "file": "analysis_2026-01-16_after-delivery.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16",
+        "cutoffDayOffset": "1",
+        "cutoffLocalTime": "00:00"
+      }
+    },
+    "source": "recorded",
+    "description": "Hindsight replay after delivery ended"
+  },
+  {
+    "file": "analysis_synthetic_edge-cases.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "synthetic",
+    "description": "SYNTHETIC: every exclusion status, flag and data-quality warning"
+  },
+  {
+    "file": "summary_default.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/accuracy-summary",
+      "params": {}
+    },
+    "source": "recorded",
+    "description": "Decisions made in January, 09:00"
+  },
+  {
+    "file": "summary_noon-before.json",
+    "status": 200,
+    "request": {
+      "path": "/api/v1/accuracy-summary",
+      "params": {
+        "cutoffDayOffset": "-1",
+        "cutoffLocalTime": "12:00"
+      }
+    },
+    "source": "recorded",
+    "description": "Decisions made in January, noon"
+  },
+  {
+    "file": "error_422_date-out-of-range.json",
+    "status": 422,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-03-01"
+      }
+    },
+    "source": "recorded",
+    "description": ""
+  },
+  {
+    "file": "error_422_naive-cutoff.json",
+    "status": 422,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16",
+        "decisionCutoff": "2026-01-15T09:00:00"
+      }
+    },
+    "source": "recorded",
+    "description": ""
+  },
+  {
+    "file": "error_422_mutually-exclusive.json",
+    "status": 422,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16",
+        "decisionCutoff": "2026-01-15T09:00:00Z",
+        "cutoffDayOffset": "-1",
+        "cutoffLocalTime": "09:00"
+      }
+    },
+    "source": "recorded",
+    "description": ""
+  },
+  {
+    "file": "error_502_upstream-unavailable.json",
+    "status": 502,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "unavailable",
+    "description": ""
+  },
+  {
+    "file": "error_503_upstream-rate-limited.json",
+    "status": 503,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "rate-limited",
+    "description": ""
+  },
+  {
+    "file": "error_504_upstream-timeout.json",
+    "status": 504,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "timeout",
+    "description": ""
+  },
+  {
+    "file": "error_500_internal.json",
+    "status": 500,
+    "request": {
+      "path": "/api/v1/wind-analysis",
+      "params": {
+        "deliveryDate": "2026-01-16"
+      }
+    },
+    "source": "internal",
+    "description": ""
+  }
+]

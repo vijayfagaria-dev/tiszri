@@ -1,0 +1,15 @@
+{
+  "error": {
+    "code": "INVALID_CUTOFF",
+    "message": "decisionCutoff must include a timezone, e.g. 2026-01-15T09:00:00Z.",
+    "details": [
+      {
+        "field": "decisionCutoff",
+        "reason": "TIMEZONE_REQUIRED",
+        "message": "decisionCutoff must include a timezone, e.g. 2026-01-15T09:00:00Z."
+      }
+    ],
+    "requestId": "fixture-error-422-naive-cutoff",
+    "retryable": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "UPSTREAM_UNAVAILABLE",
+    "message": "The Elexon data service is unavailable.",
+    "details": [],
+    "requestId": "fixture-error-502-upstream-unavailable",
+    "retryable": true
+  }
+}

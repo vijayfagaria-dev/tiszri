@@ -1,0 +1,1094 @@
+{
+  "resultState": "COMPLETE",
+  "query": {
+    "from": "2026-01-02",
+    "to": "2026-02-01",
+    "rule": {
+      "dayOffset": -1,
+      "localTime": "12:00"
+    },
+    "ruleSource": "RULE",
+    "presetId": "NOON_BEFORE_1200",
+    "businessTimezone": "Europe/London"
+  },
+  "metadata": {
+    "contractVersion": "1.0.0",
+    "algorithmVersion": "replay/1.0.0",
+    "requestId": "fixture-summary-noon-before",
+    "generatedAt": "2026-10-24T17:46:46Z",
+    "sources": [
+      {
+        "dataset": "FUELHH",
+        "role": "ACTUAL",
+        "filter": {
+          "fuelType": "WIND"
+        },
+        "requestedRange": {
+          "from": "2026-01-02",
+          "to": "2026-02-01",
+          "basis": "SETTLEMENT_DATE"
+        },
+        "rowsReceived": 1488,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": null
+      },
+      {
+        "dataset": "WINDFOR",
+        "role": "FORECAST",
+        "filter": null,
+        "requestedRange": {
+          "from": "2025-12-29T00:00:00Z",
+          "to": "2026-02-03T00:00:00Z",
+          "basis": "PUBLISH_TIME"
+        },
+        "rowsReceived": 21024,
+        "rowsRejected": 0,
+        "rowsFiltered": 0,
+        "fetchedAt": "2026-10-24T17:46:46Z",
+        "cache": "BYPASS",
+        "versions": null
+      }
+    ],
+    "unit": {
+      "label": "MW",
+      "actual": {
+        "unit": "MW",
+        "meaning": "Average over the 30-minute settlement period",
+        "status": "VERIFIED",
+        "evidence": "Elexon Insights FUELHH description"
+      },
+      "forecast": {
+        "unit": "MW",
+        "meaning": "Hourly forecast value; averaging semantics undocumented",
+        "status": "VERIFIED",
+        "evidence": "Product-owner approval; NETA IDD"
+      }
+    },
+    "resolution": {
+      "deliveryMinutes": 30,
+      "forecastMinutes": 60
+    },
+    "policyIds": {
+      "selection": "LATEST_ELIGIBLE_INCLUSIVE",
+      "mapping": "HOURLY_FORECAST_APPLIED_TO_BOTH_SETTLEMENT_PERIODS",
+      "duplicates": "EQUIVALENT_COLLAPSE_CONFLICT_EXCLUDE"
+    },
+    "counts": {
+      "expected": 1488,
+      "matched": 1488,
+      "excluded": 0,
+      "byStatus": {
+        "MATCHED": 1488,
+        "FORECAST_NOT_YET_PUBLISHED": 0,
+        "FORECAST_MISSING": 0,
+        "ACTUAL_MISSING": 0,
+        "FULLY_MISSING": 0,
+        "INVALID_VALUE": 0,
+        "AMBIGUOUS_FORECAST": 0,
+        "AMBIGUOUS_ACTUAL": 0
+      }
+    },
+    "coverage": 1.0,
+    "dayCount": 31
+  },
+  "metrics": {
+    "n": 1488,
+    "mae": 1903.8091397849462,
+    "rmse": 2363.6953021027894,
+    "bias": 1687.22311827957,
+    "directionCounts": {
+      "over": 1265,
+      "under": 223,
+      "exact": 0
+    },
+    "overShare": 0.8501344086021505,
+    "underShare": 0.14986559139784947,
+    "signConvention": "FORECAST_MINUS_ACTUAL",
+    "qualified": false,
+    "unavailableReason": null
+  },
+  "distribution": {
+    "absError": {
+      "p50": 1629,
+      "p90": 3804,
+      "p95": 4536
+    },
+    "signedError": {
+      "p10": -349,
+      "p90": 3791
+    },
+    "histogram": {
+      "binWidth": 500,
+      "bins": [
+        {
+          "lowerEdge": -4500,
+          "upperEdge": -4000,
+          "count": 1
+        },
+        {
+          "lowerEdge": -4000,
+          "upperEdge": -3500,
+          "count": 1
+        },
+        {
+          "lowerEdge": -3500,
+          "upperEdge": -3000,
+          "count": 2
+        },
+        {
+          "lowerEdge": -3000,
+          "upperEdge": -2500,
+          "count": 3
+        },
+        {
+          "lowerEdge": -2500,
+          "upperEdge": -2000,
+          "count": 0
+        },
+        {
+          "lowerEdge": -2000,
+          "upperEdge": -1500,
+          "count": 13
+        },
+        {
+          "lowerEdge": -1500,
+          "upperEdge": -1000,
+          "count": 33
+        },
+        {
+          "lowerEdge": -1000,
+          "upperEdge": -500,
+          "count": 70
+        },
+        {
+          "lowerEdge": -500,
+          "upperEdge": 0,
+          "count": 100
+        },
+        {
+          "lowerEdge": 0,
+          "upperEdge": 500,
+          "count": 116
+        },
+        {
+          "lowerEdge": 500,
+          "upperEdge": 1000,
+          "count": 176
+        },
+        {
+          "lowerEdge": 1000,
+          "upperEdge": 1500,
+          "count": 193
+        },
+        {
+          "lowerEdge": 1500,
+          "upperEdge": 2000,
+          "count": 199
+        },
+        {
+          "lowerEdge": 2000,
+          "upperEdge": 2500,
+          "count": 148
+        },
+        {
+          "lowerEdge": 2500,
+          "upperEdge": 3000,
+          "count": 138
+        },
+        {
+          "lowerEdge": 3000,
+          "upperEdge": 3500,
+          "count": 111
+        },
+        {
+          "lowerEdge": 3500,
+          "upperEdge": 4000,
+          "count": 59
+        },
+        {
+          "lowerEdge": 4000,
+          "upperEdge": 4500,
+          "count": 49
+        },
+        {
+          "lowerEdge": 4500,
+          "upperEdge": 5000,
+          "count": 21
+        },
+        {
+          "lowerEdge": 5000,
+          "upperEdge": 5500,
+          "count": 14
+        },
+        {
+          "lowerEdge": 5500,
+          "upperEdge": 6000,
+          "count": 20
+        },
+        {
+          "lowerEdge": 6000,
+          "upperEdge": 6500,
+          "count": 8
+        },
+        {
+          "lowerEdge": 6500,
+          "upperEdge": 7000,
+          "count": 13
+        }
+      ]
+    }
+  },
+  "days": [
+    {
+      "deliveryDate": "2026-01-02",
+      "cutoff": {
+        "utc": "2026-01-01T12:00:00Z",
+        "london": "2026-01-01T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 3291.8333333333335,
+      "rmse": 3343.678164337391,
+      "bias": 3291.8333333333335,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-03",
+      "cutoff": {
+        "utc": "2026-01-02T12:00:00Z",
+        "london": "2026-01-02T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 2380.9166666666665,
+      "rmse": 2667.2202368133508,
+      "bias": 2380.9166666666665,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-04",
+      "cutoff": {
+        "utc": "2026-01-03T12:00:00Z",
+        "london": "2026-01-03T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 973.4583333333334,
+      "rmse": 1113.2359363585063,
+      "bias": 946.0416666666666,
+      "directionCounts": {
+        "over": 44,
+        "under": 4,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-05",
+      "cutoff": {
+        "utc": "2026-01-04T12:00:00Z",
+        "london": "2026-01-04T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 869.1458333333334,
+      "rmse": 977.0049790900079,
+      "bias": 218.52083333333334,
+      "directionCounts": {
+        "over": 33,
+        "under": 15,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-06",
+      "cutoff": {
+        "utc": "2026-01-05T12:00:00Z",
+        "london": "2026-01-05T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1693.4375,
+      "rmse": 2009.2816657950175,
+      "bias": 1273.2708333333333,
+      "directionCounts": {
+        "over": 37,
+        "under": 11,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-07",
+      "cutoff": {
+        "utc": "2026-01-06T12:00:00Z",
+        "london": "2026-01-06T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1495.5208333333333,
+      "rmse": 1810.7076712803018,
+      "bias": 1473.2291666666667,
+      "directionCounts": {
+        "over": 45,
+        "under": 3,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-08",
+      "cutoff": {
+        "utc": "2026-01-07T12:00:00Z",
+        "london": "2026-01-07T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1691.7291666666667,
+      "rmse": 1994.948260607277,
+      "bias": 372.9791666666667,
+      "directionCounts": {
+        "over": 32,
+        "under": 16,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-09",
+      "cutoff": {
+        "utc": "2026-01-08T12:00:00Z",
+        "london": "2026-01-08T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 813.2708333333334,
+      "rmse": 1033.6269979220422,
+      "bias": 736.3125,
+      "directionCounts": {
+        "over": 39,
+        "under": 9,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-10",
+      "cutoff": {
+        "utc": "2026-01-09T12:00:00Z",
+        "london": "2026-01-09T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1245.1875,
+      "rmse": 1388.2371240173632,
+      "bias": 855.9791666666666,
+      "directionCounts": {
+        "over": 34,
+        "under": 14,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-11",
+      "cutoff": {
+        "utc": "2026-01-10T12:00:00Z",
+        "london": "2026-01-10T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 4944.854166666667,
+      "rmse": 5020.594737760989,
+      "bias": 4944.854166666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-12",
+      "cutoff": {
+        "utc": "2026-01-11T12:00:00Z",
+        "london": "2026-01-11T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 4688.791666666667,
+      "rmse": 5081.474589132568,
+      "bias": 4688.791666666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-13",
+      "cutoff": {
+        "utc": "2026-01-12T12:00:00Z",
+        "london": "2026-01-12T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1257.25,
+      "rmse": 1544.760526208944,
+      "bias": 1067.2916666666667,
+      "directionCounts": {
+        "over": 35,
+        "under": 13,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-14",
+      "cutoff": {
+        "utc": "2026-01-13T12:00:00Z",
+        "london": "2026-01-13T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1017.3125,
+      "rmse": 1119.1358552472527,
+      "bias": -219.35416666666666,
+      "directionCounts": {
+        "over": 15,
+        "under": 33,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-15",
+      "cutoff": {
+        "utc": "2026-01-14T12:00:00Z",
+        "london": "2026-01-14T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1189.7916666666667,
+      "rmse": 1304.3814785815791,
+      "bias": 1189.7916666666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-16",
+      "cutoff": {
+        "utc": "2026-01-15T12:00:00Z",
+        "london": "2026-01-15T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 882.5833333333334,
+      "rmse": 1099.3272943032025,
+      "bias": 396.625,
+      "directionCounts": {
+        "over": 27,
+        "under": 21,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-17",
+      "cutoff": {
+        "utc": "2026-01-16T12:00:00Z",
+        "london": "2026-01-16T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1859.6666666666667,
+      "rmse": 1907.5011249450592,
+      "bias": 1859.6666666666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-18",
+      "cutoff": {
+        "utc": "2026-01-17T12:00:00Z",
+        "london": "2026-01-17T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1357.5833333333333,
+      "rmse": 1459.0041837956921,
+      "bias": 1357.5833333333333,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-19",
+      "cutoff": {
+        "utc": "2026-01-18T12:00:00Z",
+        "london": "2026-01-18T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 551.8541666666666,
+      "rmse": 667.1495803041474,
+      "bias": -481.1875,
+      "directionCounts": {
+        "over": 6,
+        "under": 42,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-20",
+      "cutoff": {
+        "utc": "2026-01-19T12:00:00Z",
+        "london": "2026-01-19T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1035.5,
+      "rmse": 1389.4440884756752,
+      "bias": 318.0416666666667,
+      "directionCounts": {
+        "over": 21,
+        "under": 27,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-21",
+      "cutoff": {
+        "utc": "2026-01-20T12:00:00Z",
+        "london": "2026-01-20T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 3878.9375,
+      "rmse": 3944.529046138884,
+      "bias": 3878.9375,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-22",
+      "cutoff": {
+        "utc": "2026-01-21T12:00:00Z",
+        "london": "2026-01-21T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 2742.25,
+      "rmse": 2813.6132759614757,
+      "bias": 2742.25,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-23",
+      "cutoff": {
+        "utc": "2026-01-22T12:00:00Z",
+        "london": "2026-01-22T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1968.7916666666667,
+      "rmse": 2062.3404382723365,
+      "bias": 1968.7916666666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-24",
+      "cutoff": {
+        "utc": "2026-01-23T12:00:00Z",
+        "london": "2026-01-23T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1693.6458333333333,
+      "rmse": 1918.8607025611143,
+      "bias": 1693.6458333333333,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-25",
+      "cutoff": {
+        "utc": "2026-01-24T12:00:00Z",
+        "london": "2026-01-24T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1734.7916666666667,
+      "rmse": 1916.817892584826,
+      "bias": 1734.7916666666667,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-26",
+      "cutoff": {
+        "utc": "2026-01-25T12:00:00Z",
+        "london": "2026-01-25T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1590.625,
+      "rmse": 2031.9438148400332,
+      "bias": 1512.4166666666667,
+      "directionCounts": {
+        "over": 39,
+        "under": 9,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-27",
+      "cutoff": {
+        "utc": "2026-01-26T12:00:00Z",
+        "london": "2026-01-26T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 3537.6458333333335,
+      "rmse": 3628.8416798614953,
+      "bias": 3537.6458333333335,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-28",
+      "cutoff": {
+        "utc": "2026-01-27T12:00:00Z",
+        "london": "2026-01-27T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 2991.4583333333335,
+      "rmse": 3078.1593729045285,
+      "bias": 2991.4583333333335,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-29",
+      "cutoff": {
+        "utc": "2026-01-28T12:00:00Z",
+        "london": "2026-01-28T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1121.5833333333333,
+      "rmse": 1193.5199167448638,
+      "bias": 1121.5833333333333,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-30",
+      "cutoff": {
+        "utc": "2026-01-29T12:00:00Z",
+        "london": "2026-01-29T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 1659.2708333333333,
+      "rmse": 1764.756634543887,
+      "bias": 1659.2708333333333,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-01-31",
+      "cutoff": {
+        "utc": "2026-01-30T12:00:00Z",
+        "london": "2026-01-30T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 2247.6666666666665,
+      "rmse": 2372.5198453683515,
+      "bias": 2247.6666666666665,
+      "directionCounts": {
+        "over": 48,
+        "under": 0,
+        "exact": 0
+      }
+    },
+    {
+      "deliveryDate": "2026-02-01",
+      "cutoff": {
+        "utc": "2026-01-31T12:00:00Z",
+        "london": "2026-01-31T12:00:00+00:00",
+        "source": "RULE",
+        "rule": {
+          "dayOffset": -1,
+          "localTime": "12:00"
+        },
+        "presetId": "NOON_BEFORE_1200",
+        "position": "BEFORE_DELIVERY"
+      },
+      "resultState": "COMPLETE",
+      "expected": 48,
+      "matched": 48,
+      "mae": 611.7291666666666,
+      "rmse": 821.4444975164178,
+      "bias": 544.2708333333334,
+      "directionCounts": {
+        "over": 42,
+        "under": 6,
+        "exact": 0
+      }
+    }
+  ],
+  "featured": [
+    {
+      "kind": "WORST_DAY",
+      "deliveryDate": "2026-01-11",
+      "suggestedRule": {
+        "dayOffset": -1,
+        "localTime": "12:00"
+      },
+      "data": {
+        "mae": 4944.854166666667,
+        "bias": 4944.854166666667
+      }
+    },
+    {
+      "kind": "BEST_DAY",
+      "deliveryDate": "2026-01-19",
+      "suggestedRule": {
+        "dayOffset": -1,
+        "localTime": "12:00"
+      },
+      "data": {
+        "mae": 551.8541666666666,
+        "bias": -481.1875
+      }
+    },
+    {
+      "kind": "BIAS_HIDES_ERROR",
+      "deliveryDate": "2026-01-08",
+      "suggestedRule": {
+        "dayOffset": -1,
+        "localTime": "12:00"
+      },
+      "data": {
+        "mae": 1691.7291666666667,
+        "bias": 372.9791666666667,
+        "over": 32,
+        "under": 16
+      }
+    },
+    {
+      "kind": "OFF_SCHEDULE_VINTAGE",
+      "deliveryDate": "2026-01-16",
+      "suggestedRule": {
+        "dayOffset": -1,
+        "localTime": "12:00"
+      },
+      "data": {
+        "publishTime": "2026-01-15T12:25:00Z",
+        "missingSlot": "11:30"
+      }
+    }
+  ],
+  "sensitivity": {
+    "onTheHourOnly": {
+      "n": 744,
+      "mae": 1883.981182795699,
+      "rmse": 2350.329351205866,
+      "bias": 1685.274193548387
+    }
+  },
+  "warnings": [
+    {
+      "code": "NEWER_VERSION_AFTER_CUTOFF",
+      "severity": "INFO",
+      "scope": "SOURCE",
+      "message": "On 31 of 31 days, forecasts published after the decision time were not used.",
+      "affectedCount": 0,
+      "affectedIntervals": [],
+      "data": {
+        "days": 31
+      }
+    }
+  ]
+}

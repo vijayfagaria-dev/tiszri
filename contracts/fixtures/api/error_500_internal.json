@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "Something went wrong on our side.",
+    "details": [],
+    "requestId": "fixture-error-500-internal",
+    "retryable": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "UPSTREAM_TIMEOUT",
+    "message": "The Elexon data service did not respond in time.",
+    "details": [],
+    "requestId": "fixture-error-504-upstream-timeout",
+    "retryable": true
+  }
+}
